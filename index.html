@@ -1,0 +1,1983 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>互联网资产与信息系统管理平台 · UI 原型</title>
+<style>
+/* ============================================================
+   Design Tokens —— 8pt 间距 / 语义色彩 / 单一字体族
+   ============================================================ */
+:root{
+  /* 品牌色 */
+  --primary:#1f5eff;
+  --primary-600:#1a4fd6;
+  --primary-050:#eef3ff;
+  --primary-100:#dbe6ff;
+
+  /* 中性色 */
+  --bg:#f4f6fb;
+  --surface:#ffffff;
+  --surface-2:#fafbfe;
+  --ink-1:#0f172a;
+  --ink-2:#48566b;
+  --ink-3:#8a97ab;
+  --line:#e6eaf2;
+  --line-2:#d5dce9;
+
+  /* 语义色 */
+  --green:#0f9d6e;  --green-bg:#e8f8f1;  --green-bd:#b8ead7;
+  --amber:#c2740a;  --amber-bg:#fdf3e2;  --amber-bd:#f3d9ae;
+  --red:#dc2626;    --red-bg:#fdeced;    --red-bd:#f6c9cd;
+  --slate:#5b6b82;  --slate-bg:#eef1f6;  --slate-bd:#dbe1ec;
+  --violet:#7c3aed; --violet-bg:#f2ecfe;
+
+  /* 形状与阴影 */
+  --r-sm:8px; --r-md:10px; --r-lg:14px; --r-xl:18px;
+  --sh-1:0 1px 2px rgba(15,23,42,.05);
+  --sh-2:0 8px 22px -14px rgba(15,23,42,.22);
+  --sh-3:0 28px 70px -28px rgba(15,23,42,.32);
+  --ring:0 0 0 3px rgba(31,94,255,.16);
+  --ease:cubic-bezier(.22,.61,.36,1);
+}
+*,*::before,*::after{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;background:var(--bg);color:var(--ink-1);
+  font-family:"PingFang SC","HarmonyOS Sans SC","Microsoft YaHei",system-ui,-apple-system,"Segoe UI",sans-serif;
+  font-size:14px;line-height:1.55;-webkit-font-smoothing:antialiased;
+}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer;background:none;border:0;padding:0}
+a{color:inherit;text-decoration:none}
+svg{display:block}
+.num{font-variant-numeric:tabular-nums}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:#ccd4e2;border-radius:8px;border:3px solid transparent;background-clip:content-box}
+::-webkit-scrollbar-thumb:hover{background:#b3bed1;background-clip:content-box}
+
+/* ============================ 顶栏 ============================ */
+.topbar{
+  height:60px;display:flex;align-items:center;gap:18px;padding:0 20px;
+  background:var(--surface);border-bottom:1px solid var(--line);
+  position:sticky;top:0;z-index:60;
+}
+.brand{display:flex;align-items:center;gap:10px;flex:0 0 auto;padding-right:14px;border-right:1px solid var(--line)}
+.brand-mark{
+  width:32px;height:32px;border-radius:9px;display:grid;place-items:center;color:#fff;
+  background:linear-gradient(140deg,#2f6bff,#1844c9);
+  box-shadow:0 6px 14px -6px rgba(31,94,255,.75);
+}
+.brand-name{font-size:15px;font-weight:600;letter-spacing:.2px;white-space:nowrap}
+.brand-sub{font-size:11px;color:var(--ink-3);letter-spacing:1.6px;text-transform:uppercase;line-height:1}
+.topnav{display:flex;gap:2px;margin-left:4px}
+.topnav button{
+  padding:7px 12px;border-radius:8px;font-size:13px;color:var(--ink-2);
+  transition:background .16s var(--ease),color .16s var(--ease);
+}
+.topnav button:hover{background:var(--surface-2);color:var(--ink-1)}
+.topnav button.is-active{background:var(--primary-050);color:var(--primary);font-weight:600}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:8px}
+.searchbox{
+  display:flex;align-items:center;gap:8px;height:34px;padding:0 12px;width:260px;
+  background:var(--surface-2);border:1px solid var(--line);border-radius:9px;
+  color:var(--ink-3);transition:border-color .16s,box-shadow .16s,background .16s;
+}
+.searchbox:focus-within{background:#fff;border-color:var(--primary);box-shadow:var(--ring)}
+.searchbox input{border:0;outline:0;background:transparent;width:100%;font-size:13px;color:var(--ink-1)}
+.searchbox kbd{
+  font-family:inherit;font-size:10px;color:var(--ink-3);border:1px solid var(--line-2);
+  border-radius:4px;padding:1px 4px;background:#fff;
+}
+.icon-btn{
+  width:34px;height:34px;border-radius:9px;display:grid;place-items:center;color:var(--ink-2);
+  position:relative;transition:background .16s,color .16s;
+}
+.icon-btn:hover{background:var(--surface-2);color:var(--ink-1)}
+.badge-dot{
+  position:absolute;top:6px;right:7px;width:7px;height:7px;border-radius:50%;
+  background:var(--red);border:1.5px solid #fff;
+}
+.who{display:flex;align-items:center;gap:8px;padding-left:10px;border-left:1px solid var(--line)}
+.avatar{
+  width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:600;
+  color:#fff;background:linear-gradient(140deg,#5b83ff,#2f4fd6);
+}
+.who-meta{line-height:1.2}
+.who-meta b{display:block;font-size:12.5px;font-weight:600}
+.who-meta span{font-size:11px;color:var(--ink-3)}
+
+/* ============================ 布局 ============================ */
+.shell{display:flex;align-items:flex-start;min-height:calc(100vh - 60px)}
+.sidebar{
+  width:236px;flex:0 0 236px;padding:16px 12px 24px;background:var(--surface);
+  border-right:1px solid var(--line);position:sticky;top:60px;
+  height:calc(100vh - 60px);overflow:auto;
+  display:flex;flex-direction:column;
+}
+.nav-label{
+  margin:14px 0 6px;padding:0 10px;font-size:10.5px;letter-spacing:1.4px;
+  color:var(--ink-3);text-transform:uppercase;font-weight:600;
+}
+.nav-group:first-child .nav-label{margin-top:0}
+.nav-item{
+  width:100%;display:flex;align-items:center;gap:10px;padding:9px 10px;margin-bottom:2px;
+  border-radius:9px;font-size:13.5px;color:var(--ink-2);text-align:left;
+  transition:background .16s var(--ease),color .16s var(--ease);
+}
+.nav-item svg{flex:0 0 auto;color:var(--ink-3);transition:color .16s}
+.nav-item:hover{background:var(--surface-2);color:var(--ink-1)}
+.nav-item:hover svg{color:var(--ink-2)}
+.nav-item.is-active{background:var(--primary-050);color:var(--primary);font-weight:600}
+.nav-item.is-active svg{color:var(--primary)}
+.nav-count{
+  margin-left:auto;font-size:11px;font-weight:600;color:var(--ink-3);
+  background:var(--surface-2);border:1px solid var(--line);border-radius:20px;padding:0 7px;line-height:17px;
+}
+.nav-item.is-active .nav-count{background:#fff;border-color:var(--primary-100);color:var(--primary)}
+.nav-flag{
+  margin-left:auto;font-size:10.5px;font-weight:700;color:var(--red);background:var(--red-bg);
+  border-radius:20px;padding:0 6px;line-height:17px;
+}
+.side-foot{margin-top:auto;padding-top:22px}
+.side-card{
+  border:1px solid var(--line);border-radius:var(--r-lg);padding:13px 13px 14px;
+  background:linear-gradient(180deg,#f7f9ff,#fff);
+}
+.side-card h4{margin:0 0 4px;font-size:12.5px;font-weight:600}
+.side-card p{margin:0 0 10px;font-size:11.5px;color:var(--ink-3);line-height:1.5}
+.side-card .mini{display:flex;align-items:center;justify-content:space-between;font-size:11.5px;margin-top:6px;color:var(--ink-2)}
+.progress{height:5px;border-radius:5px;background:#e9eefb;overflow:hidden;margin-top:7px}
+.progress i{display:block;height:100%;border-radius:5px;background:linear-gradient(90deg,#4b82ff,#1f5eff)}
+
+main{flex:1;min-width:0;padding:22px 26px 64px;max-width:1560px}
+
+/* ============================ 视图切换 ============================ */
+.view{display:none}
+.view.is-active{display:block;animation:rise .3s var(--ease) both}
+@keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+/* ============================ 通用组件 ============================ */
+.page-head{display:flex;align-items:flex-start;gap:16px;margin-bottom:18px;flex-wrap:wrap}
+.page-head h1{margin:0;font-size:21px;font-weight:650;letter-spacing:-.2px}
+.page-head p{margin:4px 0 0;font-size:13px;color:var(--ink-3)}
+.page-actions{margin-left:auto;display:flex;gap:9px;align-items:center}
+
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:7px;height:36px;padding:0 14px;
+  border-radius:9px;font-size:13px;font-weight:550;border:1px solid transparent;
+  transition:transform .12s var(--ease),background .16s,box-shadow .16s,border-color .16s;
+  white-space:nowrap;
+}
+.btn:active{transform:translateY(1px)}
+.btn:focus-visible{outline:2px solid var(--primary);outline-offset:2px}
+.btn-primary{background:var(--primary);color:#fff;box-shadow:0 6px 16px -10px rgba(31,94,255,.9)}
+.btn-primary:hover{background:var(--primary-600)}
+.btn-ghost{background:#fff;border-color:var(--line-2);color:var(--ink-1);box-shadow:var(--sh-1)}
+.btn-ghost:hover{background:var(--surface-2);border-color:#c3ccdd}
+.btn-quiet{color:var(--primary);padding:0 10px}
+.btn-quiet:hover{background:var(--primary-050)}
+.btn-danger{background:#fff;border-color:var(--red-bd);color:var(--red)}
+.btn-danger:hover{background:var(--red-bg)}
+.btn-sm{height:30px;padding:0 10px;font-size:12.5px;border-radius:8px}
+.btn[disabled]{opacity:.5;pointer-events:none}
+
+.card{
+  background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);
+  box-shadow:var(--sh-1);
+}
+.card-head{display:flex;align-items:center;gap:10px;padding:15px 18px;border-bottom:1px solid var(--line)}
+.card-head h3{margin:0;font-size:14px;font-weight:600}
+.card-head .sub{font-size:11.5px;color:var(--ink-3);margin-left:2px}
+.card-head .right{margin-left:auto;display:flex;gap:8px;align-items:center}
+.card-body{padding:18px}
+
+.chip{
+  display:inline-flex;align-items:center;gap:5px;height:22px;padding:0 8px;border-radius:6px;
+  font-size:11.5px;font-weight:550;border:1px solid transparent;white-space:nowrap;
+}
+.chip i{width:5px;height:5px;border-radius:50%;background:currentColor;display:block}
+.chip.green{color:var(--green);background:var(--green-bg);border-color:var(--green-bd)}
+.chip.amber{color:var(--amber);background:var(--amber-bg);border-color:var(--amber-bd)}
+.chip.slate{color:var(--slate);background:var(--slate-bg);border-color:var(--slate-bd)}
+.chip.red{color:var(--red);background:var(--red-bg);border-color:var(--red-bd)}
+.chip.blue{color:var(--primary);background:var(--primary-050);border-color:var(--primary-100)}
+.chip.violet{color:var(--violet);background:var(--violet-bg);border-color:#e2d6fb}
+.chip.neutral{color:var(--ink-2);background:var(--surface-2);border-color:var(--line)}
+
+/* KPI */
+.kpi-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:16px}
+.kpi{
+  position:relative;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);
+  padding:16px 18px 14px;box-shadow:var(--sh-1);overflow:hidden;
+  transition:box-shadow .2s var(--ease),transform .2s var(--ease);
+}
+.kpi:hover{box-shadow:var(--sh-2);transform:translateY(-1px)}
+.kpi .k-label{display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--ink-2)}
+.kpi .k-label .ico{width:22px;height:22px;border-radius:6px;display:grid;place-items:center;background:var(--primary-050);color:var(--primary)}
+.kpi .k-value{margin-top:9px;font-size:28px;font-weight:650;letter-spacing:-.6px;line-height:1.1}
+.kpi .k-value small{font-size:13px;font-weight:500;color:var(--ink-3);margin-left:3px;letter-spacing:0}
+.kpi .k-foot{margin-top:8px;display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--ink-3)}
+.delta{font-weight:600;font-size:11.5px;display:inline-flex;align-items:center;gap:2px}
+.delta.up{color:var(--green)}
+.delta.down{color:var(--red)}
+.spark{position:absolute;right:12px;bottom:10px;opacity:.75}
+
+/* 网格 */
+.grid-2{display:grid;grid-template-columns:1.55fr 1fr;gap:14px}
+.grid-2b{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.grid-reg{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(300px,.85fr);gap:16px;align-items:start}
+@media(max-width:1240px){
+  .kpi-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .grid-2,.grid-2b,.grid-reg{grid-template-columns:1fr}
+}
+
+/* 图表 */
+.bars{display:flex;align-items:flex-end;gap:14px;height:196px;padding:8px 4px 0}
+.bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:8px;height:100%;justify-content:flex-end}
+.bar{
+  width:100%;max-width:44px;border-radius:7px 7px 3px 3px;position:relative;
+  background:linear-gradient(180deg,#5d8bff,#1f5eff);
+  transition:filter .18s var(--ease),transform .18s var(--ease);
+  animation:grow .6s var(--ease) both;
+}
+.bar:hover{filter:brightness(1.07);transform:translateY(-2px)}
+.bar .tip{
+  position:absolute;top:-26px;left:50%;transform:translateX(-50%);
+  font-size:11px;font-weight:600;color:var(--ink-2);white-space:nowrap;
+}
+@keyframes grow{from{height:0 !important;opacity:.4}}
+.bar-x{font-size:11px;color:var(--ink-3);text-align:center;line-height:1.25;white-space:nowrap}
+
+.legend{display:flex;flex-direction:column;gap:9px}
+.legend-row{display:flex;align-items:center;gap:9px;font-size:12.5px}
+.legend-row .sw{width:9px;height:9px;border-radius:3px;flex:0 0 auto}
+.legend-row .nm{color:var(--ink-2)}
+.legend-row .vl{margin-left:auto;font-weight:600;font-variant-numeric:tabular-nums}
+.legend-row .pc{width:42px;text-align:right;color:var(--ink-3);font-size:11.5px;font-variant-numeric:tabular-nums}
+
+.donut-wrap{display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+.donut{position:relative;flex:0 0 auto}
+.donut .center{
+  position:absolute;inset:0;display:grid;place-content:center;text-align:center;line-height:1.15;
+}
+.donut .center b{font-size:23px;font-weight:650;letter-spacing:-.5px}
+.donut .center span{font-size:11px;color:var(--ink-3)}
+
+/* 列表 / 时间线 */
+.todo{display:flex;flex-direction:column}
+.todo-item{display:flex;align-items:flex-start;gap:11px;padding:12px 18px;border-top:1px solid var(--line);transition:background .15s}
+.todo-item:first-child{border-top:0}
+.todo-item:hover{background:var(--surface-2)}
+.todo-ico{width:26px;height:26px;border-radius:8px;display:grid;place-items:center;flex:0 0 auto}
+.todo-main{min-width:0;flex:1}
+.todo-main b{display:block;font-size:13px;font-weight:550}
+.todo-main span{font-size:11.5px;color:var(--ink-3)}
+.todo-act{margin-left:auto;flex:0 0 auto}
+
+.timeline{position:relative;padding:4px 0 4px 4px}
+.tl-item{position:relative;padding:0 0 18px 22px;border-left:1.5px solid var(--line)}
+.tl-item:last-child{border-left-color:transparent;padding-bottom:0}
+.tl-dot{
+  position:absolute;left:-5.5px;top:3px;width:9px;height:9px;border-radius:50%;
+  background:#fff;border:2px solid var(--primary);
+}
+.tl-dot.gray{border-color:#b9c3d4}
+.tl-dot.green{border-color:var(--green)}
+.tl-dot.amber{border-color:var(--amber)}
+.tl-time{font-size:11px;color:var(--ink-3);font-variant-numeric:tabular-nums}
+.tl-text{font-size:12.5px;color:var(--ink-2);margin-top:3px;line-height:1.5}
+.tl-text b{color:var(--ink-1);font-weight:600}
+
+/* ============================ 表格 ============================ */
+.table-wrap{border:1px solid var(--line);border-radius:var(--r-lg);background:#fff;overflow:auto;box-shadow:var(--sh-1)}
+table{width:100%;border-collapse:separate;border-spacing:0;font-size:13px;min-width:940px}
+thead th{
+  position:sticky;top:0;z-index:2;background:var(--surface-2);text-align:left;
+  font-size:11.5px;font-weight:600;color:var(--ink-3);letter-spacing:.3px;
+  padding:11px 14px;border-bottom:1px solid var(--line);white-space:nowrap;
+}
+tbody td{padding:12px 14px;border-bottom:1px solid #f0f3f9;vertical-align:middle}
+tbody tr{transition:background .14s}
+tbody tr:hover{background:#f8faff}
+tbody tr.is-selected{background:var(--primary-050)}
+tbody tr:last-child td{border-bottom:0}
+td .t-name{font-weight:550;color:var(--ink-1);display:flex;align-items:center;gap:7px}
+td .t-sub{font-size:11.5px;color:var(--ink-3);margin-top:2px;font-variant-numeric:tabular-nums}
+.col-check{width:42px;padding-left:16px !important}
+.cbx{
+  appearance:none;width:16px;height:16px;border:1.5px solid #c3ccdd;border-radius:4px;
+  background:#fff;display:grid;place-items:center;transition:all .14s;cursor:pointer;margin:0;
+}
+.cbx:checked{background:var(--primary);border-color:var(--primary)}
+.cbx:checked::after{content:"";width:8px;height:4.5px;border-left:2px solid #fff;border-bottom:2px solid #fff;transform:rotate(-45deg) translateY(-1px)}
+.cbx:focus-visible{outline:2px solid var(--primary);outline-offset:2px}
+.row-act{display:flex;gap:4px;justify-content:flex-end}
+.link-btn{font-size:12.5px;color:var(--primary);padding:4px 7px;border-radius:6px;transition:background .14s}
+.link-btn:hover{background:var(--primary-050)}
+.link-btn.danger{color:var(--red)}
+.link-btn.danger:hover{background:var(--red-bg)}
+
+/* 工具条 */
+.toolbar{
+  display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:12px 14px;
+  background:#fff;border:1px solid var(--line);border-radius:var(--r-lg);margin-bottom:12px;box-shadow:var(--sh-1);
+}
+.field-inline{display:flex;align-items:center;gap:7px}
+.field-inline > span{font-size:12.5px;color:var(--ink-2);white-space:nowrap}
+.ctl{
+  height:34px;padding:0 11px;border:1px solid var(--line-2);border-radius:8px;background:#fff;
+  font-size:13px;outline:0;transition:border-color .15s,box-shadow .15s;min-width:0;
+}
+.ctl:focus{border-color:var(--primary);box-shadow:var(--ring)}
+select.ctl{padding-right:26px;min-width:86px;appearance:none;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238a97ab' stroke-width='2.4' stroke-linecap='round'><polyline points='6 9 12 15 18 9'/></svg>");
+  background-repeat:no-repeat;background-position:right 9px center;
+}
+.ctl-search{display:flex;align-items:center;gap:7px;height:34px;padding:0 10px;border:1px solid var(--line-2);border-radius:8px;background:#fff;flex:1;min-width:190px;max-width:320px}
+.ctl-search:focus-within{border-color:var(--primary);box-shadow:var(--ring)}
+.ctl-search input{border:0;outline:0;width:100%;font-size:13px;background:transparent}
+
+.selbar{
+  display:none;align-items:center;gap:10px;padding:10px 14px;margin-bottom:12px;
+  background:var(--primary-050);border:1px solid var(--primary-100);border-radius:var(--r-md);
+  font-size:12.5px;color:var(--primary-600);
+}
+.selbar.is-on{display:flex;animation:rise .2s var(--ease)}
+.selbar b{font-weight:650}
+.selbar .grow{margin-left:auto;display:flex;gap:8px}
+
+.pager{display:flex;align-items:center;gap:10px;padding:12px 4px 0;font-size:12.5px;color:var(--ink-3)}
+.pager .spacer{margin-left:auto}
+.pg{display:flex;gap:4px}
+.pg button{min-width:30px;height:30px;border-radius:7px;border:1px solid var(--line);background:#fff;font-size:12.5px;color:var(--ink-2)}
+.pg button.is-on{background:var(--primary);border-color:var(--primary);color:#fff;font-weight:600}
+.pg button:hover:not(.is-on){background:var(--surface-2)}
+
+/* ============================ 表单 ============================ */
+.steps{display:flex;align-items:center;gap:0;padding:14px 18px;background:#fff;border:1px solid var(--line);border-radius:var(--r-lg);margin-bottom:14px;box-shadow:var(--sh-1);overflow:auto}
+.step{display:flex;align-items:center;gap:9px;white-space:nowrap}
+.step .n{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:650;background:var(--slate-bg);color:var(--ink-3);border:1px solid var(--line-2)}
+.step .t{font-size:12.5px;color:var(--ink-3)}
+.step.is-done .n{background:var(--green-bg);color:var(--green);border-color:var(--green-bd)}
+.step.is-on .n{background:var(--primary);color:#fff;border-color:var(--primary);box-shadow:0 4px 10px -4px rgba(31,94,255,.8)}
+.step.is-on .t{color:var(--ink-1);font-weight:600}
+.step-line{width:44px;height:1px;background:var(--line-2);margin:0 12px;flex:0 0 auto}
+
+.type-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+.type-card{
+  border:1px solid var(--line-2);border-radius:var(--r-md);padding:13px 12px;background:#fff;text-align:left;
+  transition:all .16s var(--ease);display:flex;flex-direction:column;gap:7px;
+}
+.type-card:hover{border-color:#b9c9f0;background:#fcfdff;transform:translateY(-1px);box-shadow:var(--sh-2)}
+.type-card .ti{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;background:var(--surface-2);color:var(--ink-2);border:1px solid var(--line)}
+.type-card b{font-size:13px;font-weight:600}
+.type-card span{font-size:11px;color:var(--ink-3);line-height:1.35}
+.type-card.is-on{border-color:var(--primary);background:var(--primary-050);box-shadow:0 0 0 3px rgba(31,94,255,.1)}
+.type-card.is-on .ti{background:var(--primary);color:#fff;border-color:var(--primary)}
+.type-card.is-on b{color:var(--primary-600)}
+.type-card:focus-visible{outline:2px solid var(--primary);outline-offset:2px}
+@media(max-width:1100px){.type-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+.form-section{padding:18px}
+.form-section + .form-section{border-top:1px solid var(--line)}
+.form-section h4{margin:0 0 2px;font-size:13.5px;font-weight:600;display:flex;align-items:center;gap:7px}
+.form-section h4 .bar{width:3px;height:13px;border-radius:2px;background:var(--primary)}
+.form-section p.hint{margin:0 0 16px;font-size:11.5px;color:var(--ink-3)}
+.fgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px 18px}
+.fgrid .full{grid-column:1/-1}
+@media(max-width:760px){.fgrid{grid-template-columns:1fr}}
+label.lbl{display:block;font-size:12.5px;color:var(--ink-2);margin-bottom:6px;font-weight:550}
+label.lbl .req{color:var(--red);margin-left:2px}
+.input{
+  width:100%;height:38px;padding:0 11px;border:1px solid var(--line-2);border-radius:8px;background:#fff;
+  font-size:13px;outline:0;transition:border-color .15s,box-shadow .15s;
+}
+.input::placeholder{color:#a9b4c6}
+.input:focus{border-color:var(--primary);box-shadow:var(--ring)}
+textarea.input{height:auto;padding:9px 11px;min-height:74px;resize:vertical;line-height:1.5}
+.input.is-error{border-color:var(--red);box-shadow:0 0 0 3px rgba(220,38,38,.1)}
+.input.is-ok{border-color:var(--green)}
+.msg{display:none;align-items:flex-start;gap:5px;margin-top:6px;font-size:11.5px;line-height:1.45}
+.msg.show{display:flex}
+.msg.err{color:var(--red)}
+.msg.ok{color:var(--green)}
+.msg.info{color:var(--ink-3)}
+.seg{display:inline-flex;padding:3px;background:var(--surface-2);border:1px solid var(--line);border-radius:9px;gap:2px}
+.seg button{padding:5px 12px;border-radius:7px;font-size:12.5px;color:var(--ink-2);transition:all .15s}
+.seg button.is-on{background:#fff;color:var(--ink-1);font-weight:600;box-shadow:var(--sh-1)}
+.seg button .dot{width:6px;height:6px;border-radius:50%;display:inline-block;margin-right:5px;vertical-align:1px}
+
+.uploader{
+  border:1.5px dashed var(--line-2);border-radius:var(--r-md);background:var(--surface-2);
+  padding:22px;text-align:center;transition:all .16s var(--ease);cursor:pointer;
+}
+.uploader:hover,.uploader.is-over{border-color:var(--primary);background:var(--primary-050)}
+.uploader .u-ico{width:38px;height:38px;border-radius:10px;background:#fff;border:1px solid var(--line);display:grid;place-items:center;margin:0 auto 9px;color:var(--primary)}
+.uploader b{font-size:13px;font-weight:600;display:block}
+.uploader span{font-size:11.5px;color:var(--ink-3)}
+.file-list{margin-top:12px;display:flex;flex-direction:column;gap:7px}
+.file-row{display:flex;align-items:center;gap:9px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:#fff;font-size:12.5px}
+.file-row .fi{width:26px;height:26px;border-radius:6px;background:var(--primary-050);color:var(--primary);display:grid;place-items:center;flex:0 0 auto}
+.file-row .fn{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.file-row .fs{color:var(--ink-3);font-size:11px}
+
+.check-card{border:1px solid var(--line);border-radius:var(--r-md);padding:13px 14px;background:var(--surface-2)}
+.check-row{display:flex;align-items:flex-start;gap:9px;font-size:12px;color:var(--ink-2);line-height:1.5}
+.check-row + .check-row{margin-top:9px;padding-top:9px;border-top:1px dashed var(--line-2)}
+.check-ico{width:16px;height:16px;border-radius:50%;display:grid;place-items:center;flex:0 0 auto;margin-top:1px}
+.check-ico.ok{background:var(--green-bg);color:var(--green)}
+.check-ico.warn{background:var(--amber-bg);color:var(--amber)}
+.check-ico.idle{background:var(--slate-bg);color:var(--slate)}
+.note-list{margin:0;padding-left:16px;font-size:12px;color:var(--ink-3);line-height:1.75}
+.note-list li::marker{color:var(--primary-100)}
+
+/* ============================ Tabs ============================ */
+.tabs{display:flex;gap:2px;border-bottom:1px solid var(--line);margin-bottom:14px;overflow:auto}
+.tab{
+  padding:10px 14px;font-size:13.5px;color:var(--ink-2);position:relative;white-space:nowrap;
+  border-bottom:2px solid transparent;margin-bottom:-1px;transition:color .15s,border-color .15s;
+}
+.tab:hover{color:var(--ink-1)}
+.tab.is-on{color:var(--primary);font-weight:600;border-bottom-color:var(--primary)}
+.tab .cnt{font-size:11px;color:var(--ink-3);background:var(--surface-2);border-radius:20px;padding:0 6px;margin-left:5px;border:1px solid var(--line)}
+.tab.is-on .cnt{color:var(--primary);border-color:var(--primary-100);background:#fff}
+.tabpanel{display:none}
+.tabpanel.is-on{display:block;animation:rise .25s var(--ease) both}
+
+/* ============================ 抽屉 / 弹窗 ============================ */
+.scrim{
+  position:fixed;inset:0;background:rgba(15,23,42,.34);backdrop-filter:blur(1.5px);
+  opacity:0;pointer-events:none;transition:opacity .22s var(--ease);z-index:80;
+}
+.scrim.is-on{opacity:1;pointer-events:auto}
+.drawer{
+  position:fixed;top:0;right:0;bottom:0;width:min(560px,94vw);background:#fff;z-index:90;
+  transform:translateX(102%);transition:transform .3s var(--ease);
+  box-shadow:var(--sh-3);display:flex;flex-direction:column;
+}
+.drawer.is-on{transform:none}
+.drawer-head{padding:18px 22px 0;border-bottom:1px solid var(--line)}
+.drawer-head .dh-top{display:flex;align-items:flex-start;gap:12px}
+.drawer-head h3{margin:0;font-size:16px;font-weight:650}
+.drawer-head .dh-sub{margin-top:4px;font-size:12px;color:var(--ink-3);display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.drawer-body{flex:1;overflow:auto;padding:18px 22px 26px}
+.drawer-foot{padding:14px 22px;border-top:1px solid var(--line);display:flex;gap:9px;justify-content:flex-end;background:var(--surface-2)}
+.close-btn{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;color:var(--ink-3);margin-left:auto}
+.close-btn:hover{background:var(--surface-2);color:var(--ink-1)}
+.dl{display:grid;grid-template-columns:100px 1fr;gap:11px 12px;font-size:13px}
+.dl dt{color:var(--ink-3);font-size:12.5px}
+.dl dd{margin:0;color:var(--ink-1);word-break:break-all}
+.sect-title{font-size:11.5px;font-weight:650;letter-spacing:1px;color:var(--ink-3);text-transform:uppercase;margin:20px 0 11px}
+.sect-title:first-child{margin-top:0}
+
+.modal-wrap{position:fixed;inset:0;z-index:95;display:none;place-items:center;padding:20px}
+.modal-wrap.is-on{display:grid}
+.modal{
+  width:min(520px,96vw);background:#fff;border-radius:var(--r-xl);box-shadow:var(--sh-3);
+  animation:pop .26s var(--ease) both;overflow:hidden;max-height:92vh;display:flex;flex-direction:column;
+}
+@keyframes pop{from{opacity:0;transform:translateY(14px) scale(.98)}to{opacity:1;transform:none}}
+.modal-head{padding:18px 22px 14px;border-bottom:1px solid var(--line);display:flex;align-items:flex-start;gap:12px}
+.modal-head h3{margin:0;font-size:15.5px;font-weight:650}
+.modal-head p{margin:4px 0 0;font-size:12px;color:var(--ink-3)}
+.modal-body{padding:18px 22px;overflow:auto}
+.modal-foot{padding:14px 22px;border-top:1px solid var(--line);display:flex;gap:9px;justify-content:flex-end;background:var(--surface-2)}
+.radio-cards{display:flex;flex-direction:column;gap:8px}
+.radio-card{border:1px solid var(--line-2);border-radius:var(--r-md);padding:11px 13px;display:flex;gap:10px;align-items:flex-start;cursor:pointer;transition:all .15s;background:#fff}
+.radio-card:hover{border-color:#b9c9f0;background:#fcfdff}
+.radio-card input{margin:3px 0 0;accent-color:var(--primary)}
+.radio-card b{font-size:13px;font-weight:600;display:block}
+.radio-card span{font-size:11.5px;color:var(--ink-3)}
+.radio-card.is-on{border-color:var(--primary);background:var(--primary-050)}
+.warn-box{display:flex;gap:9px;padding:11px 12px;border-radius:9px;background:var(--amber-bg);border:1px solid var(--amber-bd);font-size:12px;color:#8a5305;line-height:1.55;margin-top:12px}
+
+/* Toast */
+#toasts{position:fixed;top:74px;right:22px;z-index:120;display:flex;flex-direction:column;gap:9px;pointer-events:none}
+.toast{
+  display:flex;align-items:flex-start;gap:9px;min-width:250px;max-width:380px;padding:11px 14px;
+  background:#fff;border:1px solid var(--line);border-radius:10px;box-shadow:var(--sh-2);
+  font-size:12.5px;animation:slidein .28s var(--ease) both;pointer-events:auto;
+}
+.toast .t-ico{width:18px;height:18px;border-radius:50%;display:grid;place-items:center;flex:0 0 auto;color:#fff;margin-top:1px}
+.toast.ok .t-ico{background:var(--green)}
+.toast.err .t-ico{background:var(--red)}
+.toast.warn .t-ico{background:var(--amber)}
+.toast.info .t-ico{background:var(--primary)}
+.toast b{display:block;font-weight:600;margin-bottom:1px}
+.toast p{margin:0;color:var(--ink-3);font-size:11.5px;line-height:1.45}
+@keyframes slidein{from{opacity:0;transform:translateX(24px)}to{opacity:1;transform:none}}
+.toast.out{animation:slideout .24s var(--ease) forwards}
+@keyframes slideout{to{opacity:0;transform:translateX(24px)}}
+
+/* 小工具 */
+.mt8{margin-top:8px}.mt12{margin-top:12px}.mt16{margin-top:16px}.mt20{margin-top:20px}
+.row{display:flex;align-items:center;gap:9px}
+.wrap{flex-wrap:wrap}
+.muted{color:var(--ink-3)}
+.tiny{font-size:11.5px}
+.divider{height:1px;background:var(--line);margin:16px 0}
+.empty{padding:44px 20px;text-align:center;color:var(--ink-3);font-size:13px}
+.empty svg{margin:0 auto 10px;opacity:.5}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.stat-mini{display:flex;gap:22px;flex-wrap:wrap}
+.stat-mini > div{min-width:88px}
+.stat-mini b{display:block;font-size:19px;font-weight:650;letter-spacing:-.3px}
+.stat-mini span{font-size:11.5px;color:var(--ink-3)}
+.fade-mask{position:relative}
+.report-card{border:1px solid var(--line);border-radius:var(--r-md);padding:14px;display:flex;gap:12px;align-items:flex-start;transition:all .16s;background:#fff;text-align:left;width:100%}
+.report-card:hover{border-color:#b9c9f0;box-shadow:var(--sh-2);transform:translateY(-1px)}
+.report-card .ri{width:34px;height:34px;border-radius:9px;display:grid;place-items:center;flex:0 0 auto;background:var(--primary-050);color:var(--primary)}
+.report-card b{font-size:13px;font-weight:600;display:block}
+.report-card span{font-size:11.5px;color:var(--ink-3);line-height:1.45;display:block;margin-top:2px}
+.report-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+@media(max-width:900px){.report-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<!-- ============================== 顶栏 ============================== -->
+<header class="topbar">
+  <div class="brand">
+    <div class="brand-mark">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="12" rx="9" ry="4"/><path d="M3 12v4c0 2.2 4 4 9 4s9-1.8 9-4v-4"/><path d="M3 8V6c0-2.2 4-4 9-4s9 1.8 9 4v2"/></svg>
+    </div>
+    <div>
+      <div class="brand-name">互联网资产与信息系统管理平台</div>
+      <div class="brand-sub">Asset &amp; System Registry</div>
+    </div>
+  </div>
+
+  <nav class="topnav" id="topnav">
+    <button data-view="dashboard" class="is-active">工作台</button>
+    <button data-view="register">登记</button>
+    <button data-view="ledger">台账</button>
+    <button data-view="maintain">维护</button>
+    <button data-view="stats">统计</button>
+  </nav>
+
+  <div class="topbar-right">
+    <label class="searchbox">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <input id="globalSearch" type="search" placeholder="搜索资产名称 / IP / 域名 / 负责人" aria-label="全局搜索" />
+      <kbd>⌘K</kbd>
+    </label>
+    <button class="icon-btn" title="核对提醒" id="bellBtn">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M18 8a6 6 0 1 0-12 0c0 6-2 7-2 7h16s-2-1-2-7"/><path d="M10.3 20a2 2 0 0 0 3.4 0"/></svg>
+      <span class="badge-dot"></span>
+    </button>
+    <button class="icon-btn" title="帮助">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M9.6 9.4a2.5 2.5 0 1 1 3.4 2.4c-.7.3-1 .9-1 1.7v.3"/><circle cx="12" cy="17" r=".6" fill="currentColor"/></svg>
+    </button>
+    <div class="who">
+      <div class="avatar">李</div>
+      <div class="who-meta"><b>李慕白</b><span>资产管理部 · 管理员</span></div>
+    </div>
+  </div>
+</header>
+
+<div class="shell">
+  <!-- ============================== 侧边栏 ============================== -->
+  <aside class="sidebar">
+    <div class="nav-group">
+      <p class="nav-label">总览</p>
+      <button class="nav-item is-active" data-view="dashboard">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="11" width="7" height="10" rx="1.5"/><rect x="3" y="15" width="7" height="6" rx="1.5"/></svg>
+        工作台
+      </button>
+    </div>
+
+    <div class="nav-group">
+      <p class="nav-label">资产管理</p>
+      <button class="nav-item" data-view="register">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="3.5" width="17" height="17" rx="4"/><path d="M12 8.5v7M8.5 12h7"/></svg>
+        资产登记
+      </button>
+      <button class="nav-item" data-view="ledger">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13M8 12h13M8 18h13"/><circle cx="3.6" cy="6" r="1.1" fill="currentColor" stroke="none"/><circle cx="3.6" cy="12" r="1.1" fill="currentColor" stroke="none"/><circle cx="3.6" cy="18" r="1.1" fill="currentColor" stroke="none"/></svg>
+        资产台账
+        <span class="nav-count num" id="navCount">14</span>
+      </button>
+      <button class="nav-item" data-view="maintain">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 5.5a4.6 4.6 0 0 1-6.1 6.1L6 20a2.1 2.1 0 0 1-3-3l8.4-8.4a4.6 4.6 0 0 1 6.1-6.1l-2.6 2.6 2 2z"/></svg>
+        更新维护
+        <span class="nav-flag" id="navDue">3</span>
+      </button>
+    </div>
+
+    <div class="nav-group">
+      <p class="nav-label">分析与导出</p>
+      <button class="nav-item" data-view="stats">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>
+        统计报表
+      </button>
+      <button class="nav-item" data-view="stats">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v9l6 3"/><circle cx="12" cy="12" r="9"/></svg>
+        可视化看板
+      </button>
+    </div>
+
+    <div class="side-foot">
+      <div class="side-card">
+        <h4>资产核对进度</h4>
+        <p>本季度信息核对已完成 11 / 14 项</p>
+        <div class="progress"><i style="width:78%"></i></div>
+        <div class="mini"><span>完成率</span><b class="num">78%</b></div>
+        <button class="btn btn-ghost btn-sm mt12" style="width:100%" data-goto="maintain">去处理核对</button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ============================== 主内容 ============================== -->
+  <main>
+
+    <!-- ==================== 视图一：工作台 ==================== -->
+    <section class="view is-active" id="view-dashboard" aria-label="工作台">
+      <div class="page-head">
+        <div>
+          <h1>资产全景工作台</h1>
+          <p>统一登记 · 全生命周期维护 · 多维统计 —— 数据截至 <span class="num">2026-10-25 19:30</span></p>
+        </div>
+        <div class="page-actions">
+          <button class="btn btn-ghost" data-export>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0 4-4m-4 4-4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+            导出报表
+          </button>
+          <button class="btn btn-primary" data-goto="register">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+            登记新资产
+          </button>
+        </div>
+      </div>
+
+      <div class="kpi-grid">
+        <div class="kpi">
+          <div class="k-label">
+            <span class="ico"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M3 9h18"/></svg></span>
+            资产总数
+          </div>
+          <div class="k-value num" id="kpiTotal">14<small>项</small></div>
+          <div class="k-foot"><span class="delta up">▲ 3</span> 较上月新增</div>
+          <svg class="spark" width="72" height="26" viewBox="0 0 72 26" fill="none"><path d="M1 20 12 16 23 18 34 11 45 13 56 7 71 4" stroke="#1f5eff" stroke-width="1.6" stroke-linecap="round"/></svg>
+        </div>
+        <div class="kpi">
+          <div class="k-label">
+            <span class="ico" style="background:#e8f8f1;color:#0f9d6e"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m4 13 5 5L20 7"/></svg></span>
+            在用资产
+          </div>
+          <div class="k-value num" id="kpiActive">10<small>项</small></div>
+          <div class="k-foot">占比 <b class="num" id="kpiActivePct">71%</b> · 运行正常</div>
+          <svg class="spark" width="72" height="26" viewBox="0 0 72 26" fill="none"><path d="M1 18 12 19 23 15 34 16 45 12 56 13 71 9" stroke="#0f9d6e" stroke-width="1.6" stroke-linecap="round"/></svg>
+        </div>
+        <div class="kpi">
+          <div class="k-label">
+            <span class="ico" style="background:#fdf3e2;color:#c2740a"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7.5v5.5l3.5 2"/></svg></span>
+            待核对信息
+          </div>
+          <div class="k-value num" id="kpiDue">3<small>项</small></div>
+          <div class="k-foot"><span class="delta down">超期 1 项</span> 需负责人确认</div>
+          <svg class="spark" width="72" height="26" viewBox="0 0 72 26" fill="none"><path d="M1 8 12 11 23 9 34 15 45 14 56 19 71 21" stroke="#c2740a" stroke-width="1.6" stroke-linecap="round"/></svg>
+        </div>
+        <div class="kpi">
+          <div class="k-label">
+            <span class="ico" style="background:#eef1f6;color:#5b6b82"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/></svg></span>
+            停用 / 报废
+          </div>
+          <div class="k-value num" id="kpiDead">4<small>项</small></div>
+          <div class="k-foot">已自动隔离标记 · 保留历史</div>
+          <svg class="spark" width="72" height="26" viewBox="0 0 72 26" fill="none"><path d="M1 22 12 21 23 22 34 17 45 18 56 15 71 13" stroke="#5b6b82" stroke-width="1.6" stroke-linecap="round"/></svg>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-head">
+            <h3>各单位资产数量对比</h3>
+            <span class="sub">按归属单位统计</span>
+            <div class="right">
+              <div class="seg" id="barDim">
+                <button class="is-on" data-dim="unit">按单位</button>
+                <button data-dim="type">按类型</button>
+              </div>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="bars" id="barChart"></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><h3>资产类型占比</h3><span class="sub">共 5 类</span></div>
+          <div class="card-body">
+            <div class="donut-wrap">
+              <div class="donut" id="donutChart"></div>
+              <div class="legend" id="donutLegend" style="flex:1;min-width:150px"></div>
+            </div>
+            <div class="divider"></div>
+            <div class="stat-mini">
+              <div><b class="num">14</b><span>资产总量</span></div>
+              <div><b class="num">5</b><span>资产类型</span></div>
+              <div><b class="num">7</b><span>归属单位</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid-2b mt16">
+        <div class="card">
+          <div class="card-head">
+            <h3>待办与提醒</h3>
+            <span class="sub" id="todoCount">4 条</span>
+            <div class="right"><button class="btn btn-quiet btn-sm" data-goto="maintain">全部处理</button></div>
+          </div>
+          <div class="todo" id="todoList"></div>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <h3>最近变更动态</h3>
+            <span class="sub">自动留痕</span>
+            <div class="right"><button class="btn btn-quiet btn-sm" data-goto="maintain">变更日志</button></div>
+          </div>
+          <div class="card-body">
+            <div class="timeline" id="dashTimeline"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== 视图二：资产登记 ==================== -->
+    <section class="view" id="view-register" aria-label="资产登记">
+      <div class="page-head">
+        <div>
+          <h1>资产登记</h1>
+          <p>按资产类型分别登记，系统自动进行唯一性校核，并生成单位资产台账</p>
+        </div>
+        <div class="page-actions">
+          <button class="btn btn-ghost" id="resetFormBtn">重置表单</button>
+          <button class="btn btn-primary" id="submitFormBtn">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m4 13 5 5L20 7"/></svg>
+            提交登记
+          </button>
+        </div>
+      </div>
+
+      <div class="steps" id="steps">
+        <div class="step is-on" data-step="1"><span class="n">1</span><span class="t">选择资产类型</span></div>
+        <div class="step-line"></div>
+        <div class="step" data-step="2"><span class="n">2</span><span class="t">填写核心字段</span></div>
+        <div class="step-line"></div>
+        <div class="step" data-step="3"><span class="n">3</span><span class="t">上传佐证材料</span></div>
+        <div class="step-line"></div>
+        <div class="step" data-step="4"><span class="n">4</span><span class="t">提交入库</span></div>
+      </div>
+
+      <div class="grid-reg">
+        <div>
+          <div class="card">
+            <div class="form-section">
+              <h4><span class="bar"></span>一、资产类型</h4>
+              <p class="hint">不同类型的资产对应不同的核心字段与佐证材料要求</p>
+              <div class="type-grid" id="typeGrid"></div>
+            </div>
+
+            <div class="form-section">
+              <h4><span class="bar"></span>二、核心字段</h4>
+              <p class="hint" id="fieldHint">带 <span style="color:#dc2626">*</span> 为必填项；IP 地址、域名提交时自动查重</p>
+              <div class="fgrid" id="formFields"></div>
+            </div>
+
+            <div class="form-section">
+              <h4><span class="bar"></span>三、佐证材料</h4>
+              <p class="hint" id="evidenceHint">支持 PDF / JPG / PNG / ZIP，单个文件不超过 20MB</p>
+              <div class="uploader" id="uploader" tabindex="0" role="button" aria-label="上传佐证材料">
+                <div class="u-ico">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4m0 0 4 4m-4-4-4 4"/><path d="M4 15v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg>
+                </div>
+                <b>点击或拖拽文件到此处上传</b>
+                <span>建议上传：<em id="eviName" style="font-style:normal;color:#5b6b82">域名备案证明</em></span>
+              </div>
+              <input type="file" id="fileInput" multiple class="sr" />
+              <div class="file-list" id="fileList"></div>
+            </div>
+          </div>
+        </div>
+
+        <aside>
+          <div class="card">
+            <div class="card-head"><h3>唯一性校核</h3><span class="sub">实时</span></div>
+            <div class="card-body">
+              <div class="check-card" id="uniqueCard">
+                <div class="check-row">
+                  <span class="check-ico idle" data-icon="ip">
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12h14"/></svg>
+                  </span>
+                  <span>输入 IP 地址或域名后自动比对全量台账</span>
+                </div>
+                <div class="check-row">
+                  <span class="check-ico idle" data-icon="name">
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12h14"/></svg>
+                  </span>
+                  <span>资产名称重复时提示合并登记</span>
+                </div>
+                <div class="check-row">
+                  <span class="check-ico idle" data-icon="unit">
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12h14"/></svg>
+                  </span>
+                  <span>同一单位同类资产重复率校验</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card mt16">
+            <div class="card-head"><h3>登记须知</h3></div>
+            <div class="card-body" style="padding-top:14px">
+              <ul class="note-list">
+                <li>资产信息须与实际运行情况一致，登记人对真实性负责。</li>
+                <li>停用、报废资产请先通过“更新维护—状态变更”办理，避免重复登记。</li>
+                <li>域名类资产须同步填写备案号，无备案号的境外域名需附说明材料。</li>
+                <li>提交后进入待核对状态，由资产管理员复核后方可纳入统计口径。</li>
+              </ul>
+              <div class="divider"></div>
+              <div class="row tiny muted">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>
+                登记问题请联系 资产管理部 · 分机 8621
+              </div>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- ==================== 视图三：资产台账 ==================== -->
+    <section class="view" id="view-ledger" aria-label="资产台账">
+      <div class="page-head">
+        <div>
+          <h1>资产台账</h1>
+          <p>按资产类型分类展示，支持模糊查询、精准定位与批量操作</p>
+        </div>
+        <div class="page-actions">
+          <button class="btn btn-ghost" data-export>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0 4-4m-4 4-4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+            导出单位清单
+          </button>
+          <button class="btn btn-primary" data-goto="register">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+            新增登记
+          </button>
+        </div>
+      </div>
+
+      <div class="toolbar">
+        <label class="ctl-search">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+          <input id="fKeyword" type="search" placeholder="资产名称 / IP / 域名 / 负责人" aria-label="模糊查询" />
+        </label>
+        <div class="field-inline"><span>类型</span>
+          <select class="ctl" id="fType"><option value="">全部</option><option value="domain">域名</option><option value="ip">IP 地址</option><option value="app">应用系统</option><option value="server">服务器</option><option value="terminal">终端设备</option></select>
+        </div>
+        <div class="field-inline"><span>单位</span>
+          <select class="ctl" id="fUnit"><option value="">全部</option></select>
+        </div>
+        <div class="field-inline"><span>状态</span>
+          <select class="ctl" id="fStatus"><option value="">全部</option><option value="active">启用</option><option value="stopped">停用</option><option value="scrapped">报废</option></select>
+        </div>
+        <button class="btn btn-ghost btn-sm" id="fReset">重置</button>
+        <span class="tiny muted" style="margin-left:auto" id="filterSummary"></span>
+      </div>
+
+      <div class="selbar" id="selBar">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m4 13 5 5L20 7"/></svg>
+        已选择 <b id="selCount">0</b> 项资产
+        <span class="grow">
+          <button class="btn btn-ghost btn-sm" id="batchEdit">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 20h4l10-10-4-4L4 16z"/><path d="m13.5 6.5 4 4"/></svg>
+            批量修改
+          </button>
+          <button class="btn btn-ghost btn-sm" id="batchStatus">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 12a8 8 0 0 1 13.7-5.7L20 8"/><path d="M20 4v4h-4"/><path d="M20 12a8 8 0 0 1-13.7 5.7L4 16"/></svg>
+            批量状态更新
+          </button>
+          <button class="btn btn-ghost btn-sm" data-export>导出选中</button>
+          <button class="btn btn-quiet btn-sm" id="batchCancel">取消选择</button>
+        </span>
+      </div>
+
+      <div class="table-wrap">
+        <table id="ledgerTable">
+          <thead>
+            <tr>
+              <th class="col-check"><input type="checkbox" class="cbx" id="checkAll" aria-label="全选" /></th>
+              <th>资产名称 / 标识</th>
+              <th>类型</th>
+              <th>归属单位 · 部门</th>
+              <th>负责人</th>
+              <th>运行状态</th>
+              <th>上线时间</th>
+              <th>最近变更</th>
+              <th style="text-align:right">操作</th>
+            </tr>
+          </thead>
+          <tbody id="ledgerBody"></tbody>
+        </table>
+      </div>
+      <div class="pager">
+        <span id="pageInfo">共 14 条</span>
+        <span class="spacer"></span>
+        <span class="tiny">每页</span>
+        <select class="ctl" style="height:30px" id="pageSize"><option>10</option><option>20</option><option>50</option></select>
+        <div class="pg" id="pager"></div>
+      </div>
+    </section>
+
+    <!-- ==================== 视图四：更新维护 ==================== -->
+    <section class="view" id="view-maintain" aria-label="更新维护">
+      <div class="page-head">
+        <div>
+          <h1>资产更新维护</h1>
+          <p>全生命周期维护留痕：变更内容、时间、操作人、变更原因全程可追溯</p>
+        </div>
+        <div class="page-actions">
+          <button class="btn btn-ghost" data-export>导出变更日志</button>
+        </div>
+      </div>
+
+      <div class="kpi-grid" style="grid-template-columns:repeat(3,minmax(0,1fr))">
+        <div class="kpi"><div class="k-label"><span class="ico" style="background:#fdf3e2;color:#c2740a">!</span>待核对提醒</div><div class="k-value num">3<small>项</small></div><div class="k-foot">系统已于 09-30 推送核对通知</div></div>
+        <div class="kpi"><div class="k-label"><span class="ico" style="background:#eef1f6;color:#5b6b82">⌛</span>隔离管理资产</div><div class="k-value num">4<small>项</small></div><div class="k-foot">停用 2 项 · 报废 2 项，历史记录保留</div></div>
+        <div class="kpi"><div class="k-label"><span class="ico" style="background:#e8f8f1;color:#0f9d6e">↻</span>本月变更次数</div><div class="k-value num">27<small>次</small></div><div class="k-foot">涉及 9 项资产 · 4 名责任人</div></div>
+      </div>
+
+      <div class="tabs" id="maintTabs">
+        <button class="tab is-on" data-tab="changelog">变更历史 <span class="cnt">27</span></button>
+        <button class="tab" data-tab="verify">核对提醒 <span class="cnt">3</span></button>
+        <button class="tab" data-tab="quarantine">停用与报废 <span class="cnt">4</span></button>
+      </div>
+
+      <div class="tabpanel is-on" id="tab-changelog">
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-head"><h3>变更时间线</h3><span class="sub">近 30 天</span>
+              <div class="right"><select class="ctl" style="height:30px" id="logFilter"><option value="">全部变更类型</option><option>状态变更</option><option>信息修改</option><option>责任人变更</option><option>批量更新</option></select></div>
+            </div>
+            <div class="card-body"><div class="timeline" id="logTimeline"></div></div>
+          </div>
+          <div class="card">
+            <div class="card-head"><h3>变更字段分布</h3><span class="sub">本月</span></div>
+            <div class="card-body">
+              <div id="fieldBars"></div>
+              <div class="divider"></div>
+              <p class="tiny muted" style="line-height:1.6;margin:0">系统对每一次变更均记录操作人、操作时间、变更前后值及变更原因，支持按资产反查完整生命周期轨迹。</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tabpanel" id="tab-verify">
+        <div class="card">
+          <div class="card-head"><h3>待核对资产</h3><span class="sub">定期提醒责任人确认资产现状</span>
+            <div class="right"><button class="btn btn-ghost btn-sm" id="notifyAll">一键催办</button></div>
+          </div>
+          <div class="todo" id="verifyList"></div>
+        </div>
+      </div>
+
+      <div class="tabpanel" id="tab-quarantine">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>资产名称</th><th>类型</th><th>归属单位</th><th>状态</th><th>隔离原因</th><th>操作人</th><th>变更时间</th><th style="text-align:right">操作</th></tr></thead>
+            <tbody id="quarantineBody"></tbody>
+          </table>
+        </div>
+        <div class="warn-box mt12" style="margin-bottom:0">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex:0 0 auto;margin-top:1px"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 2.6 17.4A1.9 1.9 0 0 0 4.3 20h15.4a1.9 1.9 0 0 0 1.7-2.6L13.7 3.9a1.9 1.9 0 0 0-3.4 0z"/></svg>
+          <span>停用、报废资产已自动隔离，不再计入在用资产统计，但其历史记录、佐证材料与变更轨迹全部保留，支持随时恢复启用或追责追溯。</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== 视图五：统计报表 ==================== -->
+    <section class="view" id="view-stats" aria-label="统计报表">
+      <div class="page-head">
+        <div>
+          <h1>资产统计查询</h1>
+          <p>支持按资产类型、归属单位、运行状态、上线时间、负责人等维度筛选统计</p>
+        </div>
+        <div class="page-actions">
+          <button class="btn btn-ghost" data-export>导出统计报表</button>
+          <button class="btn btn-primary" data-export>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0 4-4m-4 4-4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+            下载全量台账
+          </button>
+        </div>
+      </div>
+
+      <div class="toolbar">
+        <div class="field-inline"><span>统计维度</span>
+          <select class="ctl" id="sDim"><option value="type">按资产类型</option><option value="unit">按归属单位</option><option value="status">按运行状态</option></select>
+        </div>
+        <div class="field-inline"><span>归属单位</span>
+          <select class="ctl" id="sUnit"><option value="">全部</option></select>
+        </div>
+        <div class="field-inline"><span>上线时间</span>
+          <input class="ctl" type="date" id="sFrom" value="2024-01-01" /><span>至</span><input class="ctl" type="date" id="sTo" value="2026-12-31" />
+        </div>
+        <button class="btn btn-primary btn-sm" id="sQuery">查询</button>
+        <button class="btn btn-ghost btn-sm" id="sReset">重置</button>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-head"><h3 id="statsBarTitle">各单位资产数量对比</h3><span class="sub" id="statsBarSub">按归属单位</span></div>
+          <div class="card-body"><div class="bars" id="statsBars"></div></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h3 id="statsPieTitle">资产类型占比</h3><span class="sub">饼图</span></div>
+          <div class="card-body">
+            <div class="donut-wrap">
+              <div class="donut" id="statsDonut"></div>
+              <div class="legend" id="statsLegend" style="flex:1;min-width:150px"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card mt16">
+        <div class="card-head"><h3>报表导出</h3><span class="sub">按需导出，用于备案核查与安全审计</span></div>
+        <div class="card-body">
+          <div class="report-grid">
+            <button class="report-card" data-export>
+              <span class="ri"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M3 9h18M8 4v5"/></svg></span>
+              <span><b>单位资产清单</b><span>含全部字段与佐证材料索引，CSV / Excel</span></span>
+            </button>
+            <button class="report-card" data-export>
+              <span class="ri"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V9M10 19V5M16 19v-6M22 19H2"/></svg></span>
+              <span><b>资产分布报表</b><span>按单位 / 类型 / 状态交叉汇总统计</span></span>
+            </button>
+            <button class="report-card" data-export>
+              <span class="ri"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+              <span><b>资产状态统计表</b><span>启用 / 停用 / 报废数量与趋势</span></span>
+            </button>
+            <button class="report-card" data-export>
+              <span class="ri"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 4 7v6c0 5 3.4 7.6 8 8 4.6-.4 8-3 8-8V7z"/><path d="m9 12 2 2 4-4"/></svg></span>
+              <span><b>备案核查清单</b><span>按监管口径输出，可直接用于审计</span></span>
+            </button>
+          </div>
+          <div class="divider"></div>
+          <div class="row wrap" style="gap:26px">
+            <div class="stat-mini">
+              <div><b class="num" id="sTotal">14</b><span>筛选结果</span></div>
+              <div><b class="num">5</b><span>覆盖类型</span></div>
+              <div><b class="num">7</b><span>覆盖单位</span></div>
+              <div><b class="num">92%</b><span>信息完整率</span></div>
+            </div>
+            <span class="tiny muted" style="margin-left:auto">数据口径：全部已登记资产（含停用/报废）</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- ============================== 详情抽屉 ============================== -->
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="drawer" aria-label="资产详情" aria-hidden="true">
+  <div class="drawer-head">
+    <div class="dh-top">
+      <div style="flex:1;min-width:0">
+        <h3 id="dTitle">—</h3>
+        <div class="dh-sub" id="dSub"></div>
+      </div>
+      <button class="close-btn" id="drawerClose" aria-label="关闭">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>
+      </button>
+    </div>
+    <div class="tabs" id="drawerTabs" style="margin-top:14px;margin-bottom:0">
+      <button class="tab is-on" data-dtab="info">基本信息</button>
+      <button class="tab" data-dtab="files">佐证材料</button>
+      <button class="tab" data-dtab="history">变更记录</button>
+    </div>
+  </div>
+  <div class="drawer-body">
+    <div class="tabpanel is-on" id="dtab-info"></div>
+    <div class="tabpanel" id="dtab-files"></div>
+    <div class="tabpanel" id="dtab-history"></div>
+  </div>
+  <div class="drawer-foot">
+    <button class="btn btn-ghost btn-sm" id="dDrawerHistory">查看变更轨迹</button>
+    <button class="btn btn-ghost btn-sm" id="dChangeOwner">变更责任人</button>
+    <button class="btn btn-primary btn-sm" id="dChangeStatus">状态变更</button>
+  </div>
+</aside>
+
+<!-- ============================== 弹窗容器 ============================== -->
+<div class="modal-wrap" id="modalWrap"><div class="modal" id="modal"></div></div>
+
+<!-- ============================== Toast ============================== -->
+<div id="toasts" aria-live="polite"></div>
+
+<script>
+/* ============================================================================
+   互联网资产与信息系统管理 · 原型交互脚本
+   说明：纯前端 Mock 数据，用于演示交互逻辑（唯一性校验 / 批量操作 / 状态流转 / 统计图表）
+   ========================================================================== */
+
+/* ---------------------------- 1. 元数据与字典 ---------------------------- */
+const TYPE = {
+  domain:   { label:'域名',     color:'#1f5eff', evi:'域名备案证明',        icon:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.4 2.5 15.6 0 18M12 3c-2.5 2.4-2.5 15.6 0 18"/>' },
+  ip:       { label:'IP 地址',  color:'#0f9d6e', evi:'IP 分配文件',          icon:'<rect x="3" y="4" width="18" height="16" rx="3"/><path d="M7 9h3M7 13h6M7 16h4"/>' },
+  app:      { label:'应用系统', color:'#7c3aed', evi:'系统上线审批表',        icon:'<rect x="3" y="4" width="18" height="14" rx="2.5"/><path d="M8 21h8M12 18v3"/><path d="M7 8h4"/>' },
+  server:   { label:'服务器',   color:'#c2740a', evi:'设备采购合同',          icon:'<rect x="3" y="4" width="18" height="6" rx="2"/><rect x="3" y="14" width="18" height="6" rx="2"/><path d="M7 7h.01M7 17h.01"/>' },
+  terminal: { label:'终端设备', color:'#5b6b82', evi:'设备采购合同 / 领用单',  icon:'<rect x="3" y="5" width="18" height="11" rx="2"/><path d="M2 19h20"/>' }
+};
+const STATUS = {
+  active:  { label:'启用', cls:'green' },
+  stopped: { label:'停用', cls:'amber' },
+  scrapped:{ label:'报废', cls:'slate' }
+};
+const UNITS = ['集团总部','信息技术部','业务运营部','财务部','人力资源部','华东分公司','华南分公司'];
+
+/* ---------------------------- 2. 台账 Mock 数据 ---------------------------- */
+let ASSETS = [
+  { id:'A1001', name:'集团门户网站', type:'domain', ident:'www.yunqi-group.com', unit:'信息技术部', dept:'网站运维组', owner:'张明', phone:'138****2210', status:'active', online:'2024-03-12', updated:'2026-10-18', due:false, location:'公有云（华东）', beian:'沪ICP备2024012388号', level:'二级' },
+  { id:'A1002', name:'统一身份认证系统', type:'app', ident:'https://sso.yunqi-group.com', unit:'信息技术部', dept:'应用架构组', owner:'王琳', phone:'137****5566', status:'active', online:'2024-07-01', updated:'2026-10-12', due:true,  location:'自建机房 A-03', beian:'—', level:'三级' },
+  { id:'A1003', name:'对外业务 API 网关', type:'ip', ident:'10.20.31.5', unit:'信息技术部', dept:'网络组', owner:'陈昊', phone:'135****3388', status:'active', online:'2024-09-20', updated:'2026-09-28', due:false, location:'自建机房 A-01 / 机柜07', beian:'—', level:'三级' },
+  { id:'A1004', name:'核心数据库服务器', type:'server', ident:'10.20.31.21', unit:'信息技术部', dept:'数据库组', owner:'陈昊', phone:'135****3388', status:'active', online:'2023-11-08', updated:'2026-10-08', due:false, location:'自建机房 A-02 / 机柜03', beian:'—', level:'三级' },
+  { id:'A1005', name:'财务报销系统', type:'app', ident:'https://fin.yunqi-group.com', unit:'财务部', dept:'财务信息化岗', owner:'赵倩', phone:'136****7712', status:'active', online:'2025-01-15', updated:'2026-10-20', due:false, location:'自建机房 A-03', beian:'—', level:'二级' },
+  { id:'A1006', name:'华东分公司出口 IP 段', type:'ip', ident:'10.88.0.0/24', unit:'华东分公司', dept:'综合管理部', owner:'孙伟', phone:'139****4411', status:'active', online:'2025-03-06', updated:'2026-08-19', due:true,  location:'华东分公司机房', beian:'—', level:'二级' },
+  { id:'A1007', name:'企业邮箱系统', type:'domain', ident:'mail.yunqi-group.com', unit:'信息技术部', dept:'基础平台组', owner:'张明', phone:'138****2210', status:'active', online:'2024-05-22', updated:'2026-07-30', due:false, location:'公有云（华北）', beian:'沪ICP备2024012388号', level:'二级' },
+  { id:'A1008', name:'客服工单系统', type:'app', ident:'https://ticket.yunqi-group.com', unit:'业务运营部', dept:'客户服务中心', owner:'周航', phone:'137****9902', status:'active', online:'2025-06-11', updated:'2026-09-14', due:false, location:'公有云（华东）', beian:'—', level:'二级' },
+  { id:'A1009', name:'视频会议终端 VC-02', type:'terminal', ident:'MAC 3C:A9:F4:2B:71:0E', unit:'集团总部', dept:'行政部', owner:'刘芳', phone:'138****6633', status:'active', online:'2025-02-18', updated:'2026-06-21', due:false, location:'总部 12F 会议室', beian:'—', level:'—' },
+  { id:'A1010', name:'办公终端 PC-2024-0187', type:'terminal', ident:'MAC 8C:16:45:9D:22:A1', unit:'人力资源部', dept:'薪酬绩效组', owner:'吴敏', phone:'135****2255', status:'active', online:'2024-12-03', updated:'2026-05-16', due:false, location:'总部 9F 工位 A-12', beian:'—', level:'—' },
+  { id:'A1011', name:'备份存储服务器 BK-02', type:'server', ident:'10.20.31.40', unit:'信息技术部', dept:'基础设施组', owner:'陈昊', phone:'135****3388', status:'stopped', online:'2022-08-04', updated:'2026-09-05', due:false, location:'自建机房 A-02 / 机柜05', beian:'—', level:'二级' },
+  { id:'A1012', name:'旧版 OA 协同办公系统', type:'app', ident:'https://oa-old.yunqi-group.com', unit:'集团总部', dept:'办公室', owner:'刘芳', phone:'138****6633', status:'scrapped', online:'2019-04-10', updated:'2026-07-18', due:false, location:'已下线', beian:'—', level:'二级' },
+  { id:'A1013', name:'招聘管理平台', type:'domain', ident:'careers.yunqi-group.com', unit:'人力资源部', dept:'招聘组', owner:'吴敏', phone:'135****2255', status:'active', online:'2026-04-08', updated:'2026-10-09', due:true,  location:'公有云（华东）', beian:'沪ICP备2024012389号', level:'二级' },
+  { id:'A1014', name:'测试环境应用服务器 T-05', type:'server', ident:'10.20.44.15', unit:'业务运营部', dept:'研发支持组', owner:'周航', phone:'137****9902', status:'scrapped', online:'2021-10-21', updated:'2026-03-11', due:false, location:'已下线', beian:'—', level:'一级' }
+];
+
+/* 变更日志 */
+let LOGS = [
+  { t:'2026-10-20 16:42', who:'赵倩', type:'信息修改', text:'财务报销系统', detail:'变更「部署位置」：自建机房 A-02 → 自建机房 A-03', tone:'gray' },
+  { t:'2026-10-18 09:15', who:'张明', type:'状态变更', text:'集团门户网站', detail:'状态由「停用」恢复为「启用」，原因：版本升级完成', tone:'green' },
+  { t:'2026-10-12 14:03', who:'王琳', type:'信息修改', text:'统一身份认证系统', detail:'变更「负责人」：李强 → 王琳，附交接说明', tone:'gray' },
+  { t:'2026-10-09 11:20', who:'吴敏', type:'信息修改', text:'招聘管理平台', detail:'更新「联系方式」与「上线时间」佐证材料', tone:'gray' },
+  { t:'2026-09-28 17:55', who:'陈昊', type:'批量更新', text:'服务器类资产（6 项）', detail:'批量更新「所属机房」至 A-02，原因：机房扩容', tone:'amber' },
+  { t:'2026-09-05 10:08', who:'陈昊', type:'状态变更', text:'备份存储服务器 BK-02', detail:'状态「启用 → 停用」，原因：设备老化待替换，已隔离', tone:'amber' },
+  { t:'2026-07-18 15:31', who:'刘芳', type:'状态变更', text:'旧版 OA 协同办公系统', detail:'状态「停用 → 报废」，原因：业务迁移至新协同平台', tone:'gray' }
+];
+
+/* ---------------------------- 3. 工具函数 ---------------------------- */
+const $  = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+const icon = (path, size = 16, w = 1.9) =>
+  `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round">${path}</svg>`;
+const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' }[c]));
+
+function toast(title, desc = '', kind = 'ok', ms = 3200) {
+  const el = document.createElement('div');
+  el.className = 'toast ' + kind;
+  const mark = kind === 'ok' ? '✓' : kind === 'err' ? '!' : kind === 'warn' ? '!' : 'i';
+  el.innerHTML = `<span class="t-ico">${mark}</span><div><b>${esc(title)}</b>${desc ? `<p>${esc(desc)}</p>` : ''}</div>`;
+  $('#toasts').appendChild(el);
+  setTimeout(() => { el.classList.add('out'); setTimeout(() => el.remove(), 260); }, ms);
+}
+
+/* 统计聚合 */
+const countBy = (arr, key) => arr.reduce((m, a) => (m[key(a)] = (m[key(a)] || 0) + 1, m), {});
+const byUnit  = list => countBy(list, a => a.unit);
+const byType  = list => countBy(list, a => a.type);
+const byStatus= list => countBy(list, a => a.status);
+
+/* ---------------------------- 4. 图表渲染 ---------------------------- */
+function renderBars(el, data, opts = {}) {
+  const max = Math.max(1, ...Object.values(data));
+  const cols = Object.entries(data);
+  el.innerHTML = cols.map(([k, v]) => {
+    const h = Math.max(6, Math.round(v / max * (opts.height || 150)));
+    const label = opts.labelFn ? opts.labelFn(k) : k;
+    return `<div class="bar-col">
+      <div class="bar" style="height:${h}px;background:linear-gradient(180deg,${opts.color ? opts.color : '#5d8bff'},${opts.color2 ? opts.color2 : '#1f5eff'})"><span class="tip num">${v}</span></div>
+      <div class="bar-x">${esc(label)}</div>
+    </div>`;
+  }).join('');
+}
+
+function renderDonut(el, legendEl, data, colorFn) {
+  const total = Object.values(data).reduce((a, b) => a + b, 0) || 1;
+  const R = 62, C = 2 * Math.PI * R;
+  let off = 0;
+  const segs = Object.entries(data).map(([k, v]) => {
+    const len = v / total * C;
+    const s = `<circle cx="80" cy="80" r="${R}" fill="none" stroke="${colorFn(k)}" stroke-width="22"
+      stroke-dasharray="${len - 2} ${C - len + 2}" stroke-dashoffset="${-off}"
+      transform="rotate(-90 80 80)" style="transition:stroke-dasharray .5s"></circle>`;
+    off += len; return s;
+  }).join('');
+  el.innerHTML = `<svg width="160" height="160" viewBox="0 0 160 160">
+      <circle cx="80" cy="80" r="${R}" fill="none" stroke="#eef1f8" stroke-width="22"></circle>
+      ${segs}
+    </svg>
+    <div class="center"><b class="num">${total}</b><span>资产总数</span></div>`;
+  legendEl.innerHTML = Object.entries(data).map(([k, v]) => `
+    <div class="legend-row">
+      <span class="sw" style="background:${colorFn(k)}"></span>
+      <span class="nm">${esc(TYPE[k] ? TYPE[k].label : k)}</span>
+      <span class="vl num">${v}</span>
+      <span class="pc num">${(v / total * 100).toFixed(0)}%</span>
+    </div>`).join('');
+}
+
+/* ---------------------------- 5. 工作台 ---------------------------- */
+function renderDashboard() {
+  $('#navCount').textContent = ASSETS.length;
+  const due = ASSETS.filter(a => a.due).length;
+  $('#navDue').textContent = due;
+  $('#navDue').style.display = due ? '' : 'none';
+
+  const active = ASSETS.filter(a => a.status === 'active').length;
+  const dead = ASSETS.filter(a => a.status !== 'active').length;
+  $('#kpiTotal').innerHTML = ASSETS.length + '<small>项</small>';
+  $('#kpiActive').innerHTML = active + '<small>项</small>';
+  $('#kpiActivePct').textContent = Math.round(active / ASSETS.length * 100) + '%';
+  $('#kpiDue').innerHTML = due + '<small>项</small>';
+  $('#kpiDead').innerHTML = dead + '<small>项</small>';
+
+  // 柱状图（按单位 / 按类型可切换）
+  const drawBars = dim => {
+    const data = dim === 'unit' ? byUnit(ASSETS) : byType(ASSETS);
+    const labelFn = dim === 'unit' ? (k => k.length > 5 ? k.slice(0, 5) + '…' : k) : (k => TYPE[k].label);
+    renderBars($('#barChart'), data, { labelFn, height: 150 });
+  };
+  drawBars('unit');
+  $$('#barDim button').forEach(b => b.onclick = () => {
+    $$('#barDim button').forEach(x => x.classList.remove('is-on'));
+    b.classList.add('is-on'); drawBars(b.dataset.dim);
+  });
+
+  renderDonut($('#donutChart'), $('#donutLegend'), byType(ASSETS), k => TYPE[k].color);
+
+  // 待办
+  const todos = [
+    { ico: 'warn', icon: '<path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 2.6 17.4A1.9 1.9 0 0 0 4.3 20h15.4a1.9 1.9 0 0 0 1.7-2.6L13.7 3.9a1.9 1.9 0 0 0-3.4 0z"/>', t: `${due} 项资产信息待核对`, s: '其中 1 项已超期 15 天 · 统一身份认证系统', act: '去核对', view: 'maintain' },
+    { ico: 'info', icon: '<path d="M12 8v5M12 16h.01"/><circle cx="12" cy="12" r="9"/>', t: '2 项停用资产存在责任人不明', s: '备份存储服务器 BK-02 等', act: '指派责任人', view: 'maintain' },
+    { ico: 'warn', icon: '<path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/>', t: '1 项报废资产待归档确认', s: '旧版 OA 协同办公系统', act: '查看', view: 'maintain' },
+    { ico: 'ok', icon: '<path d="m4 13 5 5L20 7"/>', t: '本季度核对完成率 78%', s: '11 / 14 项已完成确认', act: '查看进度', view: 'stats' }
+  ];
+  const toneMap = { warn: 'amber', info: 'blue', ok: 'green' };
+  $('#todoCount').textContent = todos.length + ' 条';
+  $('#todoList').innerHTML = todos.map(t => `
+    <div class="todo-item">
+      <span class="todo-ico chip ${toneMap[t.ico]}" style="height:26px;width:26px;padding:0;border-radius:8px">
+        ${icon(t.icon, 14, 2)}
+      </span>
+      <div class="todo-main"><b>${esc(t.t)}</b><span>${esc(t.s)}</span></div>
+      <div class="todo-act"><button class="btn btn-ghost btn-sm" data-goto="${t.view}">${esc(t.act)}</button></div>
+    </div>`).join('');
+
+  $('#dashTimeline').innerHTML = LOGS.slice(0, 5).map(l => `
+    <div class="tl-item">
+      <span class="tl-dot ${l.tone}"></span>
+      <div class="tl-time num">${esc(l.t)} · ${esc(l.who)} · ${esc(l.type)}</div>
+      <div class="tl-text"><b>${esc(l.text)}</b> — ${esc(l.detail)}</div>
+    </div>`).join('');
+}
+
+/* ---------------------------- 6. 资产登记 ---------------------------- */
+const FIELDS = {
+  domain: [
+    { k:'name',  l:'资产名称', ph:'如：集团门户网站', req:true },
+    { k:'ident', l:'域名', ph:'如：www.example.com', req:true, uniq:'域名' },
+    { k:'beian', l:'域名备案号', ph:'如：沪ICP备2024012388号', req:true },
+    { k:'resolve', l:'解析 IP 地址', ph:'如：10.20.31.5', req:true, uniq:'解析 IP' }
+  ],
+  ip: [
+    { k:'name',  l:'资产名称', ph:'如：对外业务 API 网关', req:true },
+    { k:'ident', l:'IP 地址', ph:'如：10.20.31.5', req:true, uniq:'IP 地址' },
+    { k:'seg',   l:'IP 网段', ph:'如：10.20.31.0/24', req:true },
+    { k:'alloc', l:'分配方式', type:'select', opts:['静态分配','DHCP 动态','NAT 映射'], req:true }
+  ],
+  app: [
+    { k:'name',  l:'系统名称', ph:'如：统一身份认证系统', req:true },
+    { k:'ident', l:'访问地址', ph:'https://', req:true, uniq:'访问地址' },
+    { k:'short', l:'系统简称', ph:'如：SSO' },
+    { k:'level', l:'等级保护级别', type:'select', opts:['一级','二级','三级','四级'], req:true }
+  ],
+  server: [
+    { k:'name',  l:'资产名称 / 主机名', ph:'如：核心数据库服务器', req:true },
+    { k:'ident', l:'IP 地址', ph:'如：10.20.31.21', req:true, uniq:'IP 地址' },
+    { k:'os',    l:'操作系统', type:'select', opts:['CentOS 7.x','Ubuntu 22.04','Windows Server 2019','麒麟 V10'], req:true },
+    { k:'sn',    l:'资产编号 / SN', ph:'如：SN-2024-00187' }
+  ],
+  terminal: [
+    { k:'name',  l:'资产名称', ph:'如：办公终端 PC-2024-0187', req:true },
+    { k:'ident', l:'MAC 地址 / 设备编号', ph:'如：MAC 8C:16:45:9D:22:A1', req:true, uniq:'MAC 地址' },
+    { k:'ttype', l:'设备类型', type:'select', opts:['台式机','笔记本','打印机','视频会议终端','移动终端'], req:true },
+    { k:'user',  l:'使用人', ph:'如：吴敏' }
+  ]
+};
+
+let currentType = 'domain';
+let uploadedFiles = [];
+
+function renderTypeGrid() {
+  $('#typeGrid').innerHTML = Object.entries(TYPE).map(([k, v]) => `
+    <button class="type-card ${k === currentType ? 'is-on' : ''}" data-type="${k}">
+      <span class="ti">${icon(v.icon, 15, 1.8)}</span>
+      <b>${v.label}</b>
+      <span>${esc(v.evi)}</span>
+    </button>`).join('');
+  $$('#typeGrid .type-card').forEach(c => c.onclick = () => {
+    currentType = c.dataset.type;
+    renderTypeGrid(); renderForm(); setStep(2);
+    toast('已切换资产类型', '当前类型：' + TYPE[currentType].label + '，请填写核心字段', 'info', 2200);
+  });
+}
+
+function setStep(n) {
+  $$('#steps .step').forEach(s => {
+    const v = +s.dataset.step;
+    s.classList.toggle('is-done', v < n);
+    s.classList.toggle('is-on', v === n);
+  });
+}
+
+function renderForm() {
+  const f = FIELDS[currentType];
+  const evi = TYPE[currentType].evi;
+  $('#eviName').textContent = evi;
+  $('#evidenceHint').textContent = `建议上传「${evi}」，支持 PDF / JPG / PNG / ZIP，单个文件不超过 20MB`;
+
+  const common = [
+    { k:'unit',   l:'归属单位', type:'select', opts:UNITS, req:true },
+    { k:'dept',   l:'归属部门', ph:'如：网络运维组', req:true },
+    { k:'owner',  l:'责任人', ph:'如：张明', req:true },
+    { k:'phone',  l:'联系方式', ph:'手机号 / 内线', req:true },
+    { k:'location', l:'部署位置', ph:'如：自建机房 A-01 / 机柜07', req:true },
+    { k:'online', l:'上线时间', type:'date', req:true }
+  ];
+
+  const field = o => {
+    const id = 'f_' + o.k;
+    const ctl = o.type === 'select'
+      ? `<select class="input" id="${id}" data-k="${o.k}"><option value="">请选择</option>${o.opts.map(x => `<option>${x}</option>`).join('')}</select>`
+      : `<input class="input" id="${id}" data-k="${o.k}" type="${o.type || 'text'}" placeholder="${esc(o.ph || '')}" ${o.uniq ? 'data-uniq="1"' : ''} autocomplete="off" />`;
+    return `<div class="${o.full ? 'full' : ''}">
+      <label class="lbl" for="${id}">${o.l}${o.req ? '<span class="req">*</span>' : ''}</label>
+      ${ctl}
+      ${o.uniq ? `<div class="msg" id="msg_${o.k}">${icon('<circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/>', 12, 2)}<span></span></div>` : ''}
+    </div>`;
+  };
+
+  $('#formFields').innerHTML =
+    f.map(field).join('') +
+    `<div class="full" style="margin-top:2px"><div class="divider" style="margin:2px 0 4px"></div>
+      <div class="tiny muted" style="margin-bottom:14px">责任与管理信息</div></div>` +
+    common.map(field).join('') +
+    `<div class="full">
+      <label class="lbl" for="f_note">备注说明</label>
+      <textarea class="input" id="f_note" data-k="note" placeholder="补充说明该资产的用途、关联系统、特殊管理要求等"></textarea>
+    </div>`;
+
+  $$('#formFields [data-uniq]').forEach(inp => {
+    inp.addEventListener('input', () => checkUnique(inp));
+    inp.addEventListener('blur',  () => checkUnique(inp));
+  });
+  setStep(2);
+}
+
+/* 唯一性校验 */
+function checkUnique(inp) {
+  const k = inp.dataset.k;
+  const box = $('#msg_' + k);
+  const val = inp.value.trim();
+  if (!box) return true;
+  if (!val) { box.className = 'msg'; inp.classList.remove('is-error', 'is-ok'); return true; }
+
+  const hit = ASSETS.find(a => a.ident.toLowerCase() === val.toLowerCase());
+  if (hit) {
+    box.className = 'msg show err';
+    box.lastElementChild.textContent = `该${inp.dataset.k === 'ident' ? '标识' : '信息'}已登记：${hit.name}（${hit.unit} · ${STATUS[hit.status].label}），请勿重复登记`;
+    inp.classList.add('is-error'); inp.classList.remove('is-ok');
+    setCheckRow('ip', 'warn', '发现重复登记：' + hit.ident);
+    return false;
+  }
+  box.className = 'msg show ok';
+  box.lastElementChild.textContent = '校验通过，台账中无重复记录';
+  inp.classList.add('is-ok'); inp.classList.remove('is-error');
+  setCheckRow('ip', 'ok', `${val} 未发现重复`);
+  return true;
+}
+
+function setCheckRow(key, tone, text) {
+  const row = $(`#uniqueCard [data-icon="${key}"]`);
+  if (!row) return;
+  row.className = 'check-ico ' + tone;
+  const p = tone === 'ok'
+    ? '<path d="m5 12 4 4L19 6"/>'
+    : tone === 'warn' ? '<path d="M12 8v4M12 16h.01"/>' : '<path d="M5 12h14"/>';
+  row.innerHTML = icon(p, 10, 3);
+  row.parentElement.lastElementChild.textContent = text;
+}
+
+/* 上传交互 */
+function renderFiles() {
+  $('#fileList').innerHTML = uploadedFiles.map((f, i) => `
+    <div class="file-row">
+      <span class="fi">${icon('<path d="M14 3v5h5"/><path d="M6 3h8l5 5v13H6z"/>', 14, 1.8)}</span>
+      <span class="fn">${esc(f.name)}</span>
+      <span class="fs num">${f.size}</span>
+      <button class="link-btn danger" data-del="${i}">移除</button>
+    </div>`).join('');
+  $$('#fileList [data-del]').forEach(b => b.onclick = () => {
+    uploadedFiles.splice(+b.dataset.del, 1); renderFiles();
+    toast('已移除材料', '', 'info', 1600);
+  });
+}
+
+function bindUpload() {
+  const up = $('#uploader'), fi = $('#fileInput');
+  up.onclick = () => fi.click();
+  up.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fi.click(); } };
+  fi.onchange = () => {
+    Array.from(fi.files).forEach(f => uploadedFiles.push({ name: f.name, size: (f.size / 1024).toFixed(0) + ' KB' }));
+    if (fi.files.length) { setStep(3); renderFiles(); toast('材料上传成功', `已添加 ${fi.files.length} 个文件`, 'ok', 2400); }
+    fi.value = '';
+  };
+  ['dragenter', 'dragover'].forEach(ev => up.addEventListener(ev, e => { e.preventDefault(); up.classList.add('is-over'); }));
+  ['dragleave', 'drop'].forEach(ev => up.addEventListener(ev, e => { e.preventDefault(); up.classList.remove('is-over'); }));
+  up.addEventListener('drop', e => {
+    const fs = e.dataTransfer.files;
+    Array.from(fs).forEach(f => uploadedFiles.push({ name: f.name, size: (f.size / 1024).toFixed(0) + ' KB' }));
+    if (fs.length) { setStep(3); renderFiles(); toast('材料上传成功', `已添加 ${fs.length} 个文件`, 'ok', 2400); }
+  });
+}
+
+/* 提交登记 */
+function submitForm() {
+  const f = FIELDS[currentType];
+  const required = [...f.filter(x => x.req), ...['unit', 'dept', 'owner', 'phone', 'location', 'online'].map(k => ({ k }))];
+
+  let ok = true, firstBad = null;
+  required.forEach(r => {
+    const el = $('#f_' + r.k);
+    if (!el) return;
+    const empty = !el.value.trim();
+    el.classList.toggle('is-error', empty);
+    if (empty) { ok = false; if (!firstBad) firstBad = el; }
+  });
+  const uniqInp = $$('#formFields [data-uniq]');
+  uniqInp.forEach(i => { if (!checkUnique(i)) { ok = false; if (!firstBad) firstBad = i; } });
+
+  if (!ok) {
+    toast('存在未完成项', '请补全必填字段并处理唯一性冲突后再提交', 'err', 3400);
+    if (firstBad) { firstBad.focus(); firstBad.scrollIntoView({ block: 'center', behavior: 'smooth' }); }
+    return;
+  }
+  if (uploadedFiles.length === 0) {
+    toast('缺少佐证材料', '请至少上传 1 份与资产类型匹配的证明材料', 'warn', 3600);
+    return;
+  }
+
+  const ident = $('#f_ident').value.trim();
+  const rec = {
+    id: 'A' + (1000 + ASSETS.length + 1),
+    name: $('#f_name').value.trim(),
+    type: currentType,
+    ident,
+    unit: $('#f_unit').value,
+    dept: $('#f_dept').value.trim(),
+    owner: $('#f_owner').value.trim(),
+    phone: $('#f_phone').value.trim(),
+    status: 'active',
+    online: $('#f_online').value,
+    updated: new Date().toISOString().slice(0, 10),
+    due: false,
+    location: $('#f_location').value.trim(),
+    beian: $('#f_beian') ? $('#f_beian').value.trim() : '—',
+    level: $('#f_level') ? $('#f_level').value : '—'
+  };
+  ASSETS.unshift(rec);
+  LOGS.unshift({ t: new Date().toISOString().slice(0, 16).replace('T', ' '), who: '李慕白', type: '信息修改', text: rec.name, detail: `新增登记${TYPE[currentType].label}资产，标识 ${ident}`, tone: 'green' });
+
+  setStep(4);
+  toast('登记提交成功', `${rec.name} 已写入资产台账（编号 ${rec.id}），进入待复核状态`, 'ok', 4200);
+  resetForm();
+  renderAll();
+  setTimeout(() => go('ledger'), 620);
+}
+
+function resetForm() {
+  $$('#formFields .input').forEach(i => { i.value = ''; i.classList.remove('is-error', 'is-ok'); });
+  $$('#formFields .msg').forEach(m => m.className = 'msg');
+  uploadedFiles = []; renderFiles();
+  $$('#uniqueCard .check-ico').forEach(c => { c.className = 'check-ico idle'; c.innerHTML = icon('<path d="M5 12h14"/>', 10, 3); });
+  $$('#uniqueCard .check-row').forEach((r, i) => {
+    r.lastElementChild.textContent = ['输入 IP 地址或域名后自动比对全量台账', '资产名称重复时提示合并登记', '同一单位同类资产重复率校验'][i];
+  });
+  setStep(1);
+}
+
+/* ---------------------------- 7. 资产台账 ---------------------------- */
+const state = { keyword: '', type: '', unit: '', status: '', selected: new Set(), page: 1, pageSize: 10 };
+
+function filteredAssets() {
+  return ASSETS.filter(a => {
+    if (state.type && a.type !== state.type) return false;
+    if (state.unit && a.unit !== state.unit) return false;
+    if (state.status && a.status !== state.status) return false;
+    if (state.keyword) {
+      const k = state.keyword.toLowerCase();
+      const blob = [a.name, a.ident, a.owner, a.unit, a.dept, a.id].join(' ').toLowerCase();
+      if (!blob.includes(k)) return false;
+    }
+    return true;
+  });
+}
+
+function renderLedger() {
+  const list = filteredAssets();
+  const total = list.length;
+  const pages = Math.max(1, Math.ceil(total / state.pageSize));
+  if (state.page > pages) state.page = pages;
+  const start = (state.page - 1) * state.pageSize;
+  const rows = list.slice(start, start + state.pageSize);
+
+  $('#ledgerBody').innerHTML = rows.length ? rows.map(a => `
+    <tr data-id="${a.id}" class="${state.selected.has(a.id) ? 'is-selected' : ''}">
+      <td class="col-check"><input type="checkbox" class="cbx" data-sel="${a.id}" ${state.selected.has(a.id) ? 'checked' : ''} aria-label="选择 ${esc(a.name)}"></td>
+      <td>
+        <div class="t-name">${esc(a.name)}${a.due ? '<span class="chip amber" style="height:18px;font-size:10.5px"><i></i>待核对</span>' : ''}</div>
+        <div class="t-sub">${esc(a.ident)}</div>
+      </td>
+      <td><span class="chip neutral"><i style="background:${TYPE[a.type].color}"></i>${TYPE[a.type].label}</span></td>
+      <td><div>${esc(a.unit)}</div><div class="t-sub">${esc(a.dept)}</div></td>
+      <td><div>${esc(a.owner)}</div><div class="t-sub">${esc(a.phone)}</div></td>
+      <td><span class="chip ${STATUS[a.status].cls}"><i></i>${STATUS[a.status].label}</span></td>
+      <td class="num" style="color:#48566b">${esc(a.online)}</td>
+      <td class="num" style="color:#8a97ab">${esc(a.updated)}</td>
+      <td>
+        <div class="row-act">
+          <button class="link-btn" data-detail="${a.id}">详情</button>
+          <button class="link-btn" data-status="${a.id}">状态</button>
+        </div>
+      </td>
+    </tr>`).join('')
+    : `<tr><td colspan="9"><div class="empty">${icon('<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>', 30, 1.6)}没有匹配的资产，请调整筛选条件</div></td></tr>`;
+
+  $('#pageInfo').textContent = `共 ${total} 条 · 第 ${state.page} / ${pages} 页`;
+  const sum = [];
+  sum.push(state.type ? TYPE[state.type].label : '全部类型');
+  sum.push(state.unit || '全部单位');
+  sum.push(state.status ? STATUS[state.status].label : '全部状态');
+  $('#filterSummary').textContent = `筛选：${sum.join(' / ')} · ${total} 条`;
+
+  // 分页
+  let pg = '';
+  for (let i = 1; i <= pages; i++) pg += `<button class="${i === state.page ? 'is-on' : ''}" data-pg="${i}">${i}</button>`;
+  $('#pager').innerHTML = pg;
+
+  // 事件
+  $$('#ledgerBody [data-detail]').forEach(b => b.onclick = () => openDrawer(b.dataset.detail));
+  $$('#ledgerBody [data-status]').forEach(b => b.onclick = () => openStatusModal(b.dataset.status));
+  $$('#ledgerBody [data-sel]').forEach(c => c.onchange = () => {
+    if (c.checked) state.selected.add(c.dataset.sel); else state.selected.delete(c.dataset.sel);
+    c.closest('tr').classList.toggle('is-selected', c.checked);
+    updateSelBar();
+  });
+  $$('#pager [data-pg]').forEach(b => b.onclick = () => { state.page = +b.dataset.pg; renderLedger(); });
+  $('#checkAll').checked = rows.length > 0 && rows.every(a => state.selected.has(a.id));
+  updateSelBar();
+}
+
+function updateSelBar() {
+  const n = state.selected.size;
+  $('#selBar').classList.toggle('is-on', n > 0);
+  $('#selCount').textContent = n;
+}
+
+/* ---------------------------- 8. 维护 / 统计 ---------------------------- */
+function renderMaintain() {
+  $('#logTimeline').innerHTML = LOGS.map(l => `
+    <div class="tl-item" data-ltype="${esc(l.type)}">
+      <span class="tl-dot ${l.tone}"></span>
+      <div class="tl-time num">${esc(l.t)} · ${esc(l.who)} · ${esc(l.type)}</div>
+      <div class="tl-text"><b>${esc(l.text)}</b> — ${esc(l.detail)}</div>
+    </div>`).join('');
+
+  $('#fieldBars').innerHTML = Object.entries({ '运行状态': 8, '归属部门': 6, '责任人': 5, '联系方式': 4, '部署位置': 3, '佐证材料': 1 }).map(([k, v]) => `
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:9px;font-size:12.5px">
+      <span style="width:66px;color:#48566b">${k}</span>
+      <span style="flex:1;height:7px;background:#eef1f8;border-radius:5px;overflow:hidden">
+        <i style="display:block;height:100%;width:${v / 8 * 100}%;background:linear-gradient(90deg,#5d8bff,#1f5eff);border-radius:5px"></i>
+      </span>
+      <span class="num" style="width:22px;text-align:right;font-weight:600">${v}</span>
+    </div>`).join('');
+
+  const dues = ASSETS.filter(a => a.due);
+  $('#verifyList').innerHTML = dues.length ? dues.map(a => `
+    <div class="todo-item">
+      <span class="todo-ico chip amber" style="height:26px;width:26px;padding:0;border-radius:8px">${icon('<circle cx="12" cy="12" r="9"/><path d="M12 7.5V13l3.5 2"/>', 14, 2)}</span>
+      <div class="todo-main">
+        <b>${esc(a.name)}</b>
+        <span>责任人 ${esc(a.owner)} · 上次核对 ${esc(a.updated)} · 已超期 ${a.name.length} 天</span>
+      </div>
+      <div class="todo-act row">
+        <button class="btn btn-ghost btn-sm" data-detail="${a.id}">查看</button>
+        <button class="btn btn-primary btn-sm" data-verify="${a.id}">确认无误</button>
+      </div>
+    </div>`).join('') : `<div class="empty">暂无待核对资产</div>`;
+  $$('#verifyList [data-verify]').forEach(b => b.onclick = () => {
+    const a = ASSETS.find(x => x.id === b.dataset.verify);
+    a.due = false; a.updated = new Date().toISOString().slice(0, 10);
+    LOGS.unshift({ t: new Date().toISOString().slice(0, 16).replace('T', ' '), who: '李慕白', type: '信息修改', text: a.name, detail: '责任人确认资产信息与实际情况一致，核对完成', tone: 'green' });
+    toast('核对完成', `${a.name} 已标记为本期核对通过`, 'ok', 2800);
+    renderAll();
+  });
+
+  const dead = ASSETS.filter(a => a.status !== 'active');
+  $('#quarantineBody').innerHTML = dead.map(a => `
+    <tr>
+      <td><div class="t-name">${esc(a.name)}</div><div class="t-sub">${esc(a.ident)}</div></td>
+      <td><span class="chip neutral"><i style="background:${TYPE[a.type].color}"></i>${TYPE[a.type].label}</span></td>
+      <td>${esc(a.unit)}</td>
+      <td><span class="chip ${STATUS[a.status].cls}"><i></i>${STATUS[a.status].label}</span></td>
+      <td class="muted" style="font-size:12.5px">${a.status === 'stopped' ? '设备老化待替换' : '业务迁移 / 超过使用年限'}</td>
+      <td>${esc(a.owner)}</td>
+      <td class="num muted">${esc(a.updated)}</td>
+      <td><div class="row-act"><button class="link-btn" data-detail="${a.id}">详情</button><button class="link-btn" data-status="${a.id}">恢复启用</button></div></td>
+    </tr>`).join('');
+
+  $$('#quarantineBody [data-detail]').forEach(b => b.onclick = () => openDrawer(b.dataset.detail));
+  $$('#quarantineBody [data-status]').forEach(b => b.onclick = () => openStatusModal(b.dataset.status));
+}
+
+function renderStats() {
+  const dim = $('#sDim').value;
+  const unit = $('#sUnit').value;
+  let list = ASSETS.filter(a => !unit || a.unit === unit);
+
+  const data = dim === 'type' ? byType(list) : dim === 'unit' ? byUnit(list) : byStatus(list);
+  const labelFn = dim === 'type' ? (k => TYPE[k].label) : dim === 'status' ? (k => STATUS[k].label) : (k => k.length > 5 ? k.slice(0, 5) + '…' : k);
+  renderBars($('#statsBars'), data, { labelFn, height: 150 });
+
+  const titleMap = { type: ['资产类型数量对比', '按资产类型'], unit: ['各单位资产数量对比', '按归属单位'], status: ['运行状态分布', '按运行状态'] };
+  $('#statsBarTitle').textContent = titleMap[dim][0];
+  $('#statsBarSub').textContent = titleMap[dim][1];
+
+  renderDonut($('#statsDonut'), $('#statsLegend'), byType(list), k => TYPE[k].color);
+  $('#sTotal').textContent = list.length;
+  $('#sTotal').nextElementSibling.textContent = '筛选结果';
+}
+
+/* ---------------------------- 9. 详情抽屉 ---------------------------- */
+let drawerId = null;
+function openDrawer(id) {
+  const a = ASSETS.find(x => x.id === id); if (!a) return;
+  drawerId = id;
+  $('#dTitle').textContent = a.name;
+  $('#dSub').innerHTML = `
+    <span class="chip neutral"><i style="background:${TYPE[a.type].color}"></i>${TYPE[a.type].label}</span>
+    <span class="chip ${STATUS[a.status].cls}"><i></i>${STATUS[a.status].label}</span>
+    <span class="num">编号 ${esc(a.id)}</span>`;
+
+  $('#dtab-info').innerHTML = `
+    <p class="sect-title">登记信息</p>
+    <dl class="dl">
+      <dt>资产标识</dt><dd class="num">${esc(a.ident)}</dd>
+      <dt>归属单位</dt><dd>${esc(a.unit)}</dd>
+      <dt>归属部门</dt><dd>${esc(a.dept)}</dd>
+      <dt>责任人</dt><dd>${esc(a.owner)} · ${esc(a.phone)}</dd>
+      <dt>部署位置</dt><dd>${esc(a.location)}</dd>
+      <dt>上线时间</dt><dd class="num">${esc(a.online)}</dd>
+      <dt>备案 / 定级</dt><dd>${esc(a.beian)} · ${esc(a.level)}</dd>
+      <dt>最近更新</dt><dd class="num">${esc(a.updated)}</dd>
+    </dl>
+    <p class="sect-title">合规校核</p>
+    <div class="check-card" style="background:#fff">
+      <div class="check-row"><span class="check-ico ok">${icon('<path d="m5 12 4 4L19 6"/>', 10, 3)}</span><span>唯一性校验通过：台账中无重复 ${esc(a.ident)}</span></div>
+      <div class="check-row"><span class="check-ico ${a.due ? 'warn' : 'ok'}">${icon(a.due ? '<path d="M12 8v4M12 16h.01"/>' : '<path d="m5 12 4 4L19 6"/>', 10, 3)}</span><span>${a.due ? '信息核对已超期，请责任人尽快确认' : '信息核对在有效期内'}</span></div>
+      <div class="check-row"><span class="check-ico ok">${icon('<path d="m5 12 4 4L19 6"/>', 10, 3)}</span><span>佐证材料齐备（2 份）</span></div>
+    </div>`;
+
+  $('#dtab-files').innerHTML = `
+    <p class="sect-title">佐证材料</p>
+    <div class="file-list">
+      <div class="file-row"><span class="fi">${icon('<path d="M14 3v5h5"/><path d="M6 3h8l5 5v13H6z"/>', 14, 1.8)}</span>
+        <span class="fn">${TYPE[a.type].evi}.pdf</span><span class="fs num">1.2 MB</span>
+        <button class="link-btn">预览</button></div>
+      <div class="file-row"><span class="fi">${icon('<path d="M14 3v5h5"/><path d="M6 3h8l5 5v13H6z"/>', 14, 1.8)}</span>
+        <span class="fn">${esc(a.name)}-责任人确认单.pdf</span><span class="fs num">386 KB</span>
+        <button class="link-btn">预览</button></div>
+    </div>
+    <div class="warn-box" style="background:var(--primary-050);border-color:var(--primary-100);color:var(--primary-600)">
+      ${icon('<circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/>', 14, 2)}
+      <span>材料由登记人上传并留痕，任何替换操作均会生成新的变更记录。</span>
+    </div>`;
+
+  const his = LOGS.filter(l => l.text.includes(a.name) || (a.type === 'server' && l.text.includes('服务器')));
+  $('#dtab-history').innerHTML = his.length ? `<div class="timeline">${his.map(l => `
+    <div class="tl-item"><span class="tl-dot ${l.tone}"></span>
+      <div class="tl-time num">${esc(l.t)} · ${esc(l.who)}</div>
+      <div class="tl-text"><b>${esc(l.type)}</b> — ${esc(l.detail)}</div></div>`).join('')}</div>`
+    : `<div class="empty">该资产暂无变更记录</div>`;
+
+  $('#drawer').classList.add('is-on');
+  $('#drawer').setAttribute('aria-hidden', 'false');
+  $('#scrim').classList.add('is-on');
+  $$('#drawerTabs .tab').forEach((t, i) => t.classList.toggle('is-on', i === 0));
+  $$('.drawer-body .tabpanel').forEach((p, i) => p.classList.toggle('is-on', i === 0));
+}
+
+function closeDrawer() {
+  $('#drawer').classList.remove('is-on');
+  $('#drawer').setAttribute('aria-hidden', 'true');
+  if (!$('#modalWrap').classList.contains('is-on')) $('#scrim').classList.remove('is-on');
+}
+
+/* ---------------------------- 10. 弹窗 ---------------------------- */
+function openModal(html) {
+  $('#modal').innerHTML = html;
+  $('#modalWrap').classList.add('is-on');
+  $('#scrim').classList.add('is-on');
+}
+function closeModal() {
+  $('#modalWrap').classList.remove('is-on');
+  if (!$('#drawer').classList.contains('is-on')) $('#scrim').classList.remove('is-on');
+}
+$('#modalWrap').addEventListener('click', e => { if (e.target.id === 'modalWrap') closeModal(); });
+$('#scrim').addEventListener('click', () => { closeModal(); closeDrawer(); });
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') { closeModal(); closeDrawer(); }
+  if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); $('#globalSearch').focus(); }
+});
+
+/* 状态变更弹窗 */
+function openStatusModal(id) {
+  const a = ASSETS.find(x => x.id === id); if (!a) return;
+  const opts = [
+    { v: 'active',  t: '启用', d: '资产正常运行，计入在用资产统计' },
+    { v: 'stopped', t: '停用', d: '暂停使用但保留资产，系统自动隔离标记' },
+    { v: 'scrapped',t: '报废', d: '资产退出使用，历史记录与材料长期保留' }
+  ];
+  openModal(`
+    <div class="modal-head">
+      <div style="flex:1"><h3>变更运行状态</h3><p>${esc(a.name)} · ${esc(a.ident)}</p></div>
+      <button class="close-btn" data-close>${icon('<path d="M6 6l12 12M18 6 6 18"/>', 16, 2)}</button>
+    </div>
+    <div class="modal-body">
+      <label class="lbl">目标状态<span class="req">*</span></label>
+      <div class="radio-cards">
+        ${opts.map((o, i) => `
+          <label class="radio-card ${a.status === o.v ? 'is-on' : ''}">
+            <input type="radio" name="st" value="${o.v}" ${a.status === o.v ? 'checked' : ''}>
+            <span><b>${o.t}</b><span>${o.d}</span></span>
+          </label>`).join('')}
+      </div>
+      <div class="mt16">
+        <label class="lbl" for="stReason">变更原因<span class="req">*</span></label>
+        <textarea class="input" id="stReason" placeholder="请说明本次状态变更的原因，例如：设备老化待替换 / 业务迁移 / 版本升级完成"></textarea>
+      </div>
+      <div class="warn-box">
+        ${icon('<path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 2.6 17.4A1.9 1.9 0 0 0 4.3 20h15.4a1.9 1.9 0 0 0 1.7-2.6L13.7 3.9a1.9 1.9 0 0 0-3.4 0z"/>', 14, 2)}
+        <span>系统将自动记录变更人、变更时间与原因；停用与报废资产不会被删除，可在「停用与报废」中查看或恢复。</span>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" data-close>取消</button>
+      <button class="btn btn-primary" id="stConfirm">确认变更</button>
+    </div>`);
+
+  $$('#modal [data-close]').forEach(b => b.onclick = closeModal);
+  $$('#modal .radio-card').forEach(c => c.onclick = () => {
+    $$('#modal .radio-card').forEach(x => x.classList.remove('is-on'));
+    c.classList.add('is-on');
+  });
+  $('#stConfirm').onclick = () => {
+    const v = ($('#modal input[name=st]:checked') || {}).value;
+    const reason = $('#stReason').value.trim();
+    if (!reason) { toast('请填写变更原因', '变更原因是审计追溯的必要信息', 'err', 3000); $('#stReason').focus(); return; }
+    if (v === a.status) { toast('状态未发生变化', '当前已是「' + STATUS[v].label + '」', 'warn', 2600); return; }
+    const old = STATUS[a.status].label;
+    a.status = v; a.updated = new Date().toISOString().slice(0, 10);
+    LOGS.unshift({ t: new Date().toISOString().slice(0, 16).replace('T', ' '), who: '李慕白', type: '状态变更', text: a.name, detail: `状态「${old} → ${STATUS[v].label}」，原因：${reason}`, tone: v === 'active' ? 'green' : 'amber' });
+    closeModal(); renderAll();
+    if (drawerId === a.id) openDrawer(a.id);
+    toast('状态变更成功', `${a.name} 已更新为「${STATUS[v].label}」并记入变更日志`, 'ok', 3400);
+  };
+}
+
+/* 批量修改弹窗 */
+function openBatchModal(mode) {
+  const n = state.selected.size;
+  if (!n) { toast('尚未选择资产', '请先勾选需要操作的资产', 'warn', 2600); return; }
+  const isStatus = mode === 'status';
+  openModal(`
+    <div class="modal-head">
+      <div style="flex:1"><h3>${isStatus ? '批量状态更新' : '批量修改资产信息'}</h3><p>已选择 ${n} 项资产，本次操作将统一生效</p></div>
+      <button class="close-btn" data-close>${icon('<path d="M6 6l12 12M18 6 6 18"/>', 16, 2)}</button>
+    </div>
+    <div class="modal-body">
+      ${isStatus ? `
+        <label class="lbl">统一更新为<span class="req">*</span></label>
+        <select class="input" id="bStatus"><option value="active">启用</option><option value="stopped">停用</option><option value="scrapped">报废</option></select>`
+      : `<label class="lbl">修改字段<span class="req">*</span></label>
+        <select class="input" id="bField"><option value="unit">归属单位</option><option value="dept">归属部门</option><option value="owner">责任人</option><option value="location">部署位置</option></select>
+        <div class="mt12"><label class="lbl">统一修改为<span class="req">*</span></label>
+          <input class="input" id="bValue" placeholder="请输入新的字段值" /></div>`}
+      <div class="mt16"><label class="lbl" for="bReason">变更原因<span class="req">*</span></label>
+        <textarea class="input" id="bReason" placeholder="如：组织架构调整 / 机房整体搬迁 / 责任片区重新划分"></textarea></div>
+      <div class="warn-box">
+        ${icon('<circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/>', 14, 2)}
+        <span>批量操作将逐条生成变更记录，操作人、时间与原因均留痕可查。</span>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" data-close>取消</button>
+      <button class="btn btn-primary" id="bConfirm">确认执行</button>
+    </div>`);
+
+  $$('#modal [data-close]').forEach(b => b.onclick = closeModal);
+  $('#bConfirm').onclick = () => {
+    const reason = $('#bReason').value.trim();
+    if (!reason) { toast('请填写变更原因', '', 'err', 2600); $('#bReason').focus(); return; }
+    const today = new Date().toISOString().slice(0, 10);
+    const ts = new Date().toISOString().slice(0, 16).replace('T', ' ');
+    if (isStatus) {
+      const v = $('#bStatus').value;
+      ASSETS.forEach(a => { if (state.selected.has(a.id)) { a.status = v; a.updated = today; } });
+      LOGS.unshift({ t: ts, who: '李慕白', type: '批量更新', text: `${n} 项资产`, detail: `批量状态更新为「${STATUS[v].label}」，原因：${reason}`, tone: 'amber' });
+    } else {
+      const f = $('#bField').value, val = $('#bValue').value.trim();
+      if (!val) { toast('请填写修改后的值', '', 'err', 2600); return; }
+      const map = { unit: '归属单位', dept: '归属部门', owner: '责任人', location: '部署位置' };
+      ASSETS.forEach(a => { if (state.selected.has(a.id)) { a[f] = val; a.updated = today; } });
+      LOGS.unshift({ t: ts, who: '李慕白', type: '批量更新', text: `${n} 项资产`, detail: `批量修改「${map[f]}」为 ${val}，原因：${reason}`, tone: 'amber' });
+    }
+    state.selected.clear();
+    closeModal(); renderAll();
+    toast('批量操作完成', `已更新 ${n} 项资产，变更日志已生成`, 'ok', 3400);
+  };
+}
+
+/* ---------------------------- 11. 导出 ---------------------------- */
+function exportCsv() {
+  const list = (state.selected.size && document.getElementById('view-ledger').classList.contains('is-active'))
+    ? ASSETS.filter(a => state.selected.has(a.id)) : filteredAssets();
+  const head = ['资产编号', '资产名称', '资产类型', '资产标识', '归属单位', '归属部门', '责任人', '联系方式', '运行状态', '上线时间', '部署位置', '最近变更'];
+  const rows = list.map(a => [a.id, a.name, TYPE[a.type].label, a.ident, a.unit, a.dept, a.owner, a.phone, STATUS[a.status].label, a.online, a.location, a.updated]);
+  const csv = '\ufeff' + [head, ...rows].map(r => r.map(x => `"${String(x).replace(/"/g, '""')}"`).join(',')).join('\r\n');
+  const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
+  const a = document.createElement('a');
+  a.href = url; a.download = `互联网资产台账_${new Date().toISOString().slice(0, 10)}.csv`;
+  a.click(); URL.revokeObjectURL(url);
+  toast('导出成功', `共 ${list.length} 条记录，已生成 CSV 文件`, 'ok', 3200);
+}
+
+/* ---------------------------- 12. 导航与初始化 ---------------------------- */
+function go(view) {
+  $$('.nav-item').forEach(n => n.classList.toggle('is-active', n.dataset.view === view));
+  $$('#topnav button').forEach(n => n.classList.toggle('is-active', n.dataset.view === view));
+  $$('.view').forEach(v => v.classList.toggle('is-active', v.id === 'view-' + view));
+  if (location.hash.slice(1) !== view) history.replaceState(null, '', '#' + view);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function renderAll() {
+  renderDashboard(); renderLedger(); renderMaintain(); renderStats();
+}
+
+function init() {
+  // 单位下拉
+  const unitOpts = UNITS.map(u => `<option value="${u}">${u}</option>`).join('');
+  $('#fUnit').insertAdjacentHTML('beforeend', unitOpts);
+  $('#sUnit').insertAdjacentHTML('beforeend', unitOpts);
+
+  // 导航
+  $$('.nav-item').forEach(n => n.onclick = () => go(n.dataset.view));
+  $$('#topnav button').forEach(n => n.onclick = () => go(n.dataset.view));
+  document.addEventListener('click', e => {
+    const g = e.target.closest('[data-goto]');
+    if (g) go(g.dataset.goto);
+    const ex = e.target.closest('[data-export]');
+    if (ex) exportCsv();
+  });
+
+  // 登记
+  renderTypeGrid(); renderForm(); bindUpload();
+  $('#submitFormBtn').onclick = submitForm;
+  $('#resetFormBtn').onclick = () => { resetForm(); toast('表单已重置', '', 'info', 2000); };
+
+  // 台账筛选
+  $('#fKeyword').addEventListener('input', e => { state.keyword = e.target.value; state.page = 1; renderLedger(); });
+  $('#fType').onchange = e => { state.type = e.target.value; state.page = 1; renderLedger(); };
+  $('#fUnit').onchange = e => { state.unit = e.target.value; state.page = 1; renderLedger(); };
+  $('#fStatus').onchange = e => { state.status = e.target.value; state.page = 1; renderLedger(); };
+  $('#fReset').onclick = () => {
+    state.keyword = ''; state.type = ''; state.unit = ''; state.status = ''; state.page = 1; state.selected.clear();
+    $('#fKeyword').value = ''; $('#fType').value = ''; $('#fUnit').value = ''; $('#fStatus').value = '';
+    renderLedger(); toast('筛选条件已重置', '', 'info', 1800);
+  };
+  $('#checkAll').onchange = e => {
+    const list = filteredAssets();
+    const start = (state.page - 1) * state.pageSize;
+    list.slice(start, start + state.pageSize).forEach(a => e.target.checked ? state.selected.add(a.id) : state.selected.delete(a.id));
+    renderLedger();
+  };
+  $('#pageSize').onchange = e => { state.pageSize = +e.target.value; state.page = 1; renderLedger(); };
+  $('#batchEdit').onclick = () => openBatchModal('edit');
+  $('#batchStatus').onclick = () => openBatchModal('status');
+  $('#batchCancel').onclick = () => { state.selected.clear(); renderLedger(); };
+
+  // 维护 tabs
+  $$('#maintTabs .tab').forEach(t => t.onclick = () => {
+    $$('#maintTabs .tab').forEach(x => x.classList.remove('is-on'));
+    t.classList.add('is-on');
+    $$('.tabpanel').forEach(p => { if (['tab-changelog','tab-verify','tab-quarantine'].includes(p.id)) p.classList.toggle('is-on', p.id === 'tab-' + t.dataset.tab); });
+  });
+  $('#logFilter').onchange = e => {
+    const v = e.target.value;
+    $$('#logTimeline .tl-item').forEach(i => { i.style.display = (!v || i.dataset.ltype === v) ? '' : 'none'; });
+  };
+  $('#notifyAll').onclick = () => toast('催办通知已发送', '已向 3 名责任人推送核对提醒（站内信 + 短信）', 'ok', 3400);
+
+  // 抽屉
+  $('#drawerClose').onclick = closeDrawer;
+  $$('#drawerTabs .tab').forEach(t => t.onclick = () => {
+    $$('#drawerTabs .tab').forEach(x => x.classList.remove('is-on'));
+    t.classList.add('is-on');
+    $$('.drawer-body .tabpanel').forEach(p => p.classList.toggle('is-on', p.id === 'dtab-' + t.dataset.dtab));
+  });
+  $('#dChangeStatus').onclick = () => drawerId && openStatusModal(drawerId);
+  $('#dChangeOwner').onclick = () => toast('责任变更流程', '已发起责任人变更申请，待接收人确认后生效', 'info', 3200);
+  $('#dDrawerHistory').onclick = () => { $$('#drawerTabs .tab')[2].click(); };
+
+  // 统计
+  $('#sQuery').onclick = () => { renderStats(); toast('统计已刷新', '已按当前筛选条件重新计算', 'ok', 2200); };
+  $('#sDim').onchange = renderStats;
+  $('#sUnit').onchange = renderStats;
+  $('#sReset').onclick = () => { $('#sDim').value = 'type'; $('#sUnit').value = ''; renderStats(); };
+  $('#sTo') && ($('#sTo').onchange = renderStats);
+
+  // 全局搜索
+  $('#globalSearch').addEventListener('keydown', e => {
+    if (e.key === 'Enter') {
+      state.keyword = e.target.value; state.page = 1;
+      $('#fKeyword').value = e.target.value;
+      go('ledger'); renderLedger();
+      toast('已定位到台账', `关键词：${e.target.value || '（空）'}`, 'info', 2400);
+    }
+  });
+  $('#bellBtn').onclick = () => { go('maintain'); $$('#maintTabs .tab')[1].click(); };
+
+  renderAll();
+
+  // 支持 URL hash 直达（如 index.html#ledger）
+  const h = location.hash.slice(1);
+  if (['dashboard','register','ledger','maintain','stats'].includes(h)) go(h);
+}
+init();
+</script>
+</body>
+</html>

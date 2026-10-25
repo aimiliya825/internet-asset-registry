@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>互联网资产和信息系统管理 · 软件需求规格说明书</title>
+<style>
+@page{ size:A4; margin:16mm 14mm; }
+*{box-sizing:border-box}
+body{
+  margin:0;background:#e9edf3;color:#1b2431;
+  font-family:"SimSun","Songti SC","Source Han Serif SC",serif;
+  font-size:12pt;line-height:1.85;
+}
+.page{
+  width:210mm;min-height:297mm;padding:20mm 18mm 14mm;background:#fff;
+  margin:0 auto 16px;box-shadow:0 2px 18px rgba(15,23,42,.13);
+  position:relative;display:flex;flex-direction:column;
+}
+.pg-head{
+  display:flex;align-items:center;justify-content:space-between;
+  font-family:"Microsoft YaHei",sans-serif;font-size:8.5pt;color:#8b98ab;
+  border-bottom:1px solid #e4e9f1;padding-bottom:6px;margin-bottom:16px;letter-spacing:.3px;
+}
+.pg-foot{
+  margin-top:auto;padding-top:10px;border-top:1px solid #e4e9f1;
+  display:flex;justify-content:space-between;
+  font-family:"Microsoft YaHei",sans-serif;font-size:8.5pt;color:#8b98ab;
+}
+h1,h2,h3,h4{font-family:"Microsoft YaHei","Heiti SC",sans-serif;color:#101828;margin:0}
+h1{font-size:17pt;font-weight:700;letter-spacing:.2px}
+h2{font-size:13pt;font-weight:700;margin:20px 0 8px;padding-left:9px;border-left:4px solid #1f5eff;line-height:1.4}
+h3{font-size:11.5pt;font-weight:700;margin:15px 0 6px;color:#1f3355}
+h4{font-size:11pt;font-weight:700;margin:12px 0 4px;color:#33415c}
+p{margin:0 0 8px;text-align:justify;text-justify:inter-ideograph;text-indent:2em}
+p.noind{text-indent:0}
+ul,ol{margin:6px 0 10px;padding-left:2.2em}
+li{margin:3px 0;text-align:justify}
+.chapter-head{border-bottom:2px solid #101828;padding-bottom:8px;margin-bottom:14px;display:flex;align-items:baseline;gap:10px}
+.chapter-head .cno{font-family:"Microsoft YaHei",sans-serif;font-size:11pt;color:#1f5eff;font-weight:700;letter-spacing:1px}
+.tbl{width:100%;border-collapse:collapse;font-size:9.5pt;line-height:1.6;margin:8px 0 12px;background:#fff}
+.tbl th{background:#f2f5fb;font-family:"Microsoft YaHei",sans-serif;font-weight:700;font-size:9pt;color:#25344d;text-align:left}
+.tbl th,.tbl td{border:1px solid #ccd5e3;padding:5px 7px;vertical-align:top}
+.tbl td.c{text-align:center}
+.tbl tr:nth-child(even) td{background:#fafbfe}
+.cap{font-family:"Microsoft YaHei",sans-serif;font-size:8.5pt;color:#7a8799;text-indent:0;margin:-6px 0 14px;text-align:center}
+.note{
+  background:#f5f8ff;border:1px solid #d9e3fb;border-left:3px solid #1f5eff;border-radius:0 6px 6px 0;
+  padding:9px 13px;margin:10px 0 12px;font-size:10pt;line-height:1.7;
+}
+.note p{text-indent:0;margin:0 0 4px}
+.note p:last-child{margin:0}
+.note b{font-family:"Microsoft YaHei",sans-serif;color:#1a4fd6}
+.tag{
+  display:inline-block;font-family:"Microsoft YaHei",sans-serif;font-size:8pt;font-weight:700;
+  padding:0 6px;border-radius:4px;background:#eef3ff;color:#1a4fd6;border:1px solid #d9e3fb;
+}
+/* 封面 */
+.cover{justify-content:center;padding:26mm 22mm}
+.cover .badge{
+  font-family:"Microsoft YaHei",sans-serif;font-size:9pt;letter-spacing:3px;color:#1f5eff;font-weight:700;
+  display:inline-block;border:1px solid #c9d8ff;background:#f2f6ff;padding:4px 12px;border-radius:20px;
+}
+.cover h1{font-size:27pt;line-height:1.35;margin:20px 0 6px;letter-spacing:1px}
+.cover .en{font-family:"Segoe UI",sans-serif;font-size:10.5pt;color:#8b98ab;letter-spacing:.6px}
+.cover .rule{height:3px;width:64px;background:#1f5eff;margin:22px 0 26px;border-radius:2px}
+.cover-meta{width:100%;font-size:11pt;border-collapse:collapse;max-width:120mm}
+.cover-meta td{padding:7px 0;border-bottom:1px dashed #dfe5ef}
+.cover-meta td:first-child{width:32mm;color:#7a8799;font-family:"Microsoft YaHei",sans-serif;font-size:10pt}
+.cover .bottom{margin-top:auto;font-family:"Microsoft YaHei",sans-serif;font-size:10pt;color:#5a6a80;line-height:2}
+/* 目录 */
+.toc{font-family:"Microsoft YaHei",sans-serif;font-size:10.5pt;line-height:2.05}
+.toc .l1{font-weight:700;color:#101828;margin-top:7px}
+.toc .l2{padding-left:2em;color:#42526b;font-size:10pt}
+.toc .row{display:flex;align-items:baseline;gap:6px}
+.toc .dot{flex:1;border-bottom:1px dotted #c5cdda;transform:translateY(-3px)}
+.toc .pgno{color:#7a8799;font-size:9.5pt;font-variant-numeric:tabular-nums}
+.print-bar{
+  position:fixed;top:16px;right:18px;z-index:9;display:flex;gap:8px;
+}
+.print-bar button{
+  font-family:"Microsoft YaHei",sans-serif;font-size:12px;padding:8px 14px;border-radius:8px;cursor:pointer;
+  border:1px solid #d3dae6;background:#fff;color:#243044;box-shadow:0 4px 12px rgba(15,23,42,.08);
+}
+.print-bar button.p{background:#1f5eff;border-color:#1f5eff;color:#fff}
+@media print{
+  body{background:#fff;font-size:11.5pt}
+  .page{margin:0;box-shadow:none;padding:0;min-height:auto;page-break-after:always;width:auto}
+  .page:last-child{page-break-after:auto}
+  .print-bar{display:none}
+  .pg-foot{display:none}
+  .pg-head{margin-bottom:12px}
+  h2{page-break-after:avoid}
+  .tbl{page-break-inside:auto}
+  .tbl tr{page-break-inside:avoid}
+}
+</style>
+</head>
+<body>
+
+<div class="print-bar">
+  <button onclick="window.print()" class="p">打印 / 导出 PDF</button>
+</div>
+
+<!-- ============================ 封面 ============================ -->
+<section class="page cover">
+  <div>
+    <span class="badge">软件需求规格说明书</span>
+    <h1>互联网资产和信息<br />系统管理平台</h1>
+    <div class="en">Software Requirements Specification for Internet Asset &amp; Information System Registry</div>
+    <div class="rule"></div>
+    <table class="cover-meta">
+      <tr><td>文档编号</td><td>SRS-ASSET-2026-001</td></tr>
+      <tr><td>版本号</td><td>V1.0（基线版）</td></tr>
+      <tr><td>文档状态</td><td>已评审 · 待归档</td></tr>
+      <tr><td>编制部门</td><td>资产管理部 · 信息化建设组</td></tr>
+      <tr><td>密级</td><td>内部公开</td></tr>
+      <tr><td>适用系统</td><td>互联网资产与信息系统管理平台（含 Web 管理端）</td></tr>
+    </table>
+  </div>
+  <div class="bottom">
+    编制：__________&nbsp;&nbsp;&nbsp;审核：__________&nbsp;&nbsp;&nbsp;批准：__________<br />
+    发布日期：2026 年 10 月 25 日
+  </div>
+</section>
+
+<!-- ============================ 文档信息 + 目录 ============================ -->
+<section class="page">
+  <div class="pg-head"><span>互联网资产与信息系统管理平台 · 软件需求规格说明书</span><span>SRS-ASSET-2026-001</span></div>
+
+  <h1>文档修订记录</h1>
+  <table class="tbl">
+    <thead><tr><th style="width:14%">版本</th><th style="width:20%">修订日期</th><th style="width:18%">修订人</th><th>修订说明</th></tr></thead>
+    <tbody>
+      <tr><td class="c">V0.1</td><td class="c">2026-10-08</td><td class="c">李慕白</td><td>依据业务原始需求完成需求梳理与章节骨架搭建</td></tr>
+      <tr><td class="c">V0.5</td><td class="c">2026-10-16</td><td class="c">王琳</td><td>补充资产字段清单、唯一性校验规则与状态流转定义</td></tr>
+      <tr><td class="c">V0.9</td><td class="c">2026-10-21</td><td class="c">陈昊</td><td>补充非功能需求、接口需求与界面交互规范</td></tr>
+      <tr><td class="c">V1.0</td><td class="c">2026-10-25</td><td class="c">李慕白</td><td>评审意见闭环，形成需求基线，同步发布 UI 原型 V1.0</td></tr>
+    </tbody>
+  </table>
+
+  <h1 style="margin-top:22px">目录</h1>
+  <div class="toc" style="margin-top:12px">
+    <div class="row l1"><span>1&nbsp;&nbsp;引言</span><span class="dot"></span><span class="pgno">3</span></div>
+    <div class="row l2"><span>1.1 编写目的</span><span class="dot"></span><span class="pgno">3</span></div>
+    <div class="row l2"><span>1.2 项目背景与建设目标</span><span class="dot"></span><span class="pgno">3</span></div>
+    <div class="row l2"><span>1.3 术语与缩略语</span><span class="dot"></span><span class="pgno">3</span></div>
+
+    <div class="row l1"><span>2&nbsp;&nbsp;总体描述</span><span class="dot"></span><span class="pgno">4</span></div>
+    <div class="row l2"><span>2.1 产品定位与系统边界</span><span class="dot"></span><span class="pgno">4</span></div>
+    <div class="row l2"><span>2.2 用户角色与权限矩阵</span><span class="dot"></span><span class="pgno">4</span></div>
+    <div class="row l2"><span>2.3 运行环境与设计约束</span><span class="dot"></span><span class="pgno">4</span></div>
+
+    <div class="row l1"><span>3&nbsp;&nbsp;功能需求</span><span class="dot"></span><span class="pgno">5</span></div>
+    <div class="row l2"><span>3.1 功能结构总览</span><span class="dot"></span><span class="pgno">5</span></div>
+    <div class="row l2"><span>3.2 资产登记上传（FR-01～FR-08）</span><span class="dot"></span><span class="pgno">5</span></div>
+    <div class="row l2"><span>3.3 资产更新维护（FR-09～FR-17）</span><span class="dot"></span><span class="pgno">7</span></div>
+    <div class="row l2"><span>3.4 资产统计查询（FR-18～FR-25）</span><span class="dot"></span><span class="pgno">8</span></div>
+
+    <div class="row l1"><span>4&nbsp;&nbsp;数据需求</span><span class="dot"></span><span class="pgno">9</span></div>
+    <div class="row l1"><span>5&nbsp;&nbsp;非功能需求</span><span class="dot"></span><span class="pgno">10</span></div>
+    <div class="row l1"><span>6&nbsp;&nbsp;接口需求</span><span class="dot"></span><span class="pgno">11</span></div>
+    <div class="row l1"><span>7&nbsp;&nbsp;界面与交互规范</span><span class="dot"></span><span class="pgno">11</span></div>
+    <div class="row l1"><span>8&nbsp;&nbsp;验收标准</span><span class="dot"></span><span class="pgno">12</span></div>
+    <div class="row l1"><span>附录 A&nbsp;&nbsp;需求—原型追溯矩阵</span><span class="dot"></span><span class="pgno">12</span></div>
+    <div class="row l1"><span>附录 B&nbsp;&nbsp;待确认事项</span><span class="dot"></span><span class="pgno">12</span></div>
+  </div>
+
+  <div class="pg-foot"><span>SRS-ASSET-2026-001 · V1.0</span><span>第 2 页 / 共 12 页</span></div>
+</section>
+
+<!-- ============================ 1 引言 ============================ -->
+<section class="page">
+  <div class="pg-head"><span>1 引言</span><span>SRS-ASSET-2026-001</span></div>
+
+  <div class="chapter-head"><span class="cno">01</span><h1>引言</h1></div>
+
+  <h2>1.1 编写目的</h2>
+  <p>本文档面向“互联网资产和信息系统管理”业务场景，系统性地定义平台的业务范围、功能需求、数据需求、非功能需求与界面交互要求，作为产品设计、UI 原型制作、研发实现、测试验收与上线评估的共同依据。</p>
+  <p>预期读者包括：业务主管部门（需求提出方与验收方）、产品与交互设计人员、前端与后端研发人员、测试人员、安全与审计人员、运维实施人员。</p>
+
+  <h2>1.2 项目背景与建设目标</h2>
+  <p>当前互联网资产与信息系统分散在各归属单位、以 Excel 台账和人工报送方式维护，存在登记口径不统一、重复登记、责任人不明确、状态更新滞后、停用报废资产长期“挂在账上”、统计口径难以支撑上级核查与安全审计等问题。</p>
+  <p>本平台的建设目标是建立“一本账”式的资产治理底座，实现三个层次的闭环：</p>
+  <ul>
+    <li><b>登记标准化</b>——统一的登记入口与按类型分列的字段模板，配套佐证材料上传与自动查重，源头保证数据真实、合规、不冗余；</li>
+    <li><b>维护全周期</b>——覆盖启用、变更、停用、报废、责任人交接的全生命周期，每一次变更自动留痕，责任始终可追溯，杜绝“僵尸资产”；</li>
+    <li><b>查询多维化</b>——支持按类型、单位、状态、时间、责任人等维度组合统计，输出可视化图表与可导出的标准报表，支撑管理层决策与外部核查。</li>
+  </ul>
+
+  <h2>1.3 术语与缩略语</h2>
+  <table class="tbl">
+    <thead><tr><th style="width:22%">术语 / 缩略语</th><th>说明</th></tr></thead>
+    <tbody>
+      <tr><td>互联网资产</td><td>本单位拥有或使用的、暴露于互联网或与互联网存在连接关系的资产实体，包括域名、IP 地址、应用系统、服务器、终端设备等五类。</td></tr>
+      <tr><td>资产台账</td><td>以归属单位为主键组织的资产明细集合，是登记、维护、统计的统一数据源。</td></tr>
+      <tr><td>核心字段</td><td>某一资产类型下必须登记的关键信息项，如域名备案号、IP 网段、系统名称、部署位置、上线时间、归属部门、负责人及联系方式。</td></tr>
+      <tr><td>佐证材料</td><td>证明资产真实性与合规性的附件，如域名备案证明、IP 分配文件、系统上线审批表、设备采购合同等。</td></tr>
+      <tr><td>唯一性校验</td><td>提交登记时对 IP 地址、域名、MAC 地址等资产标识进行全量比对，发现重复即拦截并提示的处理机制。</td></tr>
+      <tr><td>隔离管理</td><td>对停用、报废资产进行的逻辑隔离：退出在用统计口径，但历史信息、材料与变更轨迹完整保留。</td></tr>
+      <tr><td>僵尸资产</td><td>实际已下线或不再使用，但台账中仍标记为在用、且长期无人核对的资产记录。</td></tr>
+      <tr><td>CMDB</td><td>配置管理数据库（Configuration Management Database），本平台的上游配置数据来源之一。</td></tr>
+      <tr><td>SRS</td><td>软件需求规格说明书（Software Requirements Specification）。</td></tr>
+    </tbody>
+  </table>
+
+  <div class="note">
+    <p><b>参考文件：</b>《网络安全法》《数据安全法》《信息安全技术 网络安全等级保护基本要求》（GB/T 22239）、《软件文档管理指南》（GB/T 8567）、《信息系统安全管理要求》及本单位《互联网资产管理办法（试行）》。</p>
+  </div>
+
+  <div class="pg-foot"><span>SRS-ASSET-2026-001 · V1.0</span><span>第 3 页 / 共 12 页</span></div>
+</section>
+
+<!-- ============================ 2 总体描述 ============================ -->
+<section class="page">
+  <div class="pg-head"><span>2 总体描述</span><span>SRS-ASSET-2026-001</span></div>
+
+  <div class="chapter-head"><span class="cno">02</span><h1>总体描述</h1></div>
+
+  <h2>2.1 产品定位与系统边界</h2>
+  <p>本平台为内部管理类 Web 应用，定位为“互联网资产与信息系统的唯一权威台账”。系统边界内包含：资产登记、资产台账、更新维护、统计报表四个业务域；系统边界外但需对接的包括统一身份认证（SSO）、短信/站内信通知服务、CMDB 与备案信息核验服务。</p>
+  <p class="noind"><span class="tag">边界说明</span>&nbsp;资产的实际监控探活、漏洞扫描、流量分析等能力不在本期范围，平台仅通过接口接收其“运行状态”与“在线情况”作为核对参考。</p>
+
+  <h2>2.2 用户角色与权限矩阵</h2>
+  <table class="tbl">
+    <thead><tr><th style="width:16%">角色</th><th style="width:26%">职责定位</th><th>主要权限</th></tr></thead>
+    <tbody>
+      <tr><td><b>资产责任人</b></td><td>资产的直接使用与管理者</td><td>登记本人负责的资产；修改资产基本信息；更新运行状态；上传/补充佐证材料；响应定期核对提醒；发起责任人变更申请。</td></tr>
+      <tr><td><b>单位资产管理员</b></td><td>本单位台账的汇总与审核者</td><td>审核本单位登记申请；查看与导出本单位资产清单；批量修改与批量状态更新；指派责任人；催办核对。</td></tr>
+      <tr><td><b>平台管理员</b></td><td>全局数据与规则维护者</td><td>全量资产查看与导出；字典与字段模板配置；查重规则配置；跨单位数据调拨；操作日志审计。</td></tr>
+      <tr><td><b>决策 / 审计用户</b></td><td>管理层与内外部审计人员</td><td>只读访问统计报表与可视化看板；导出全量统计报表；查看变更历史（不可编辑）。</td></tr>
+    </tbody>
+  </table>
+  <p class="cap">表 2-1 角色与权限矩阵</p>
+
+  <h2>2.3 运行环境与设计约束</h2>
+  <table class="tbl">
+    <thead><tr><th style="width:20%">类别</th><th>要求</th></tr></thead>
+    <tbody>
+      <tr><td>客户端</td><td>Chrome 100+ / Edge 100+ / 国产主流内核浏览器；最小分辨率 1366×768，主设计基准 1440×900，兼容 1920×1080 及 2K 屏。</td></tr>
+      <tr><td>服务端</td><td>B/S 架构，前后端分离；支持容器化部署于单位内网，不依赖公网资源（图标、字体、脚本均本地化）。</td></tr>
+      <tr><td>身份认证</td><td>对接统一身份认证，支持单点登录与角色分级授权；敏感操作二次校验。</td></tr>
+      <tr><td>数据合规</td><td>资产数据分级分类管理，导出行为留痕；附件存储加密，访问需鉴权。</td></tr>
+      <tr><td>实施约束</td><td>一期不新建独立 App；所有列表页须支持键盘操作与 200% 文本缩放不破版。</td></tr>
+    </tbody>
+  </table>
+  <p class="cap">表 2-2 运行环境与约束</p>
+
+  <div class="pg-foot"><span>SRS-ASSET-2026-001 · V1.0</span><span>第 4 页 / 共 12 页</span></div>
+</section>
+
+<!-- ============================ 3.1 + 3.2 ============================ -->
+<section class="page">
+  <div class="pg-head"><span>3 功能需求</span><span>SRS-ASSET-2026-001</span></div>
+
+  <div class="chapter-head"><span class="cno">03</span><h1>功能需求</h1></div>
+
+  <h2>3.1 功能结构总览</h2>
+  <p>系统功能划分为三大模块、二十五个功能点，编号 FR-01～FR-25，与 UI 原型页面一一对应（详见附录 A 追溯矩阵）。</p>
+  <table class="tbl">
+    <thead><tr><th style="width:12%">模块</th><th style="width:22%">子功能</th><th style="width:14%">编号</th><th>核心能力</th></tr></thead>
+    <tbody>
+      <tr><td rowspan="3"><b>资产登记上传</b></td><td>类型化登记</td><td class="c">FR-01～03</td><td>按五类资产分别登记，动态呈现对应核心字段</td></tr>
+      <tr><td>唯一性校验</td><td class="c">FR-04～05</td><td>IP / 域名 / MAC 实时查重，重复即提示拦截</td></tr>
+      <tr><td>材料上传与入库</td><td class="c">FR-06～08</td><td>佐证材料上传、单位台账生成、按类分类展示</td></tr>
+      <tr><td rowspan="4"><b>资产更新维护</b></td><td>信息与状态维护</td><td class="c">FR-09～11</td><td>基本信息修改、启用/停用/报废状态流转</td></tr>
+      <tr><td>变更留痕</td><td class="c">FR-12～13</td><td>记录变更内容/时间/操作人/原因，形成历史日志</td></tr>
+      <tr><td>批量与隔离</td><td class="c">FR-14～16</td><td>批量修改、批量状态更新、停用报废自动隔离</td></tr>
+      <tr><td>责任与核对</td><td class="c">FR-17</td><td>责任人变更申请、定期核对提醒、超期预警</td></tr>
+      <tr><td rowspan="3"><b>资产统计查询</b></td><td>多维筛选统计</td><td class="c">FR-18～20</td><td>按类型/单位/状态/上线时间/责任人组合统计</td></tr>
+      <tr><td>检索与详情</td><td class="c">FR-21～23</td><td>模糊查询、精准定位、详情与佐证材料联动展示</td></tr>
+      <tr><td>导出与可视化</td><td class="c">FR-24～25</td><td>清单/报表导出、数量对比图与占比饼图</td></tr>
+    </tbody>
+  </table>
+  <p class="cap">表 3-1 功能结构总览</p>
+
+  <h2>3.2 资产登记上传</h2>
+
+  <h3>3.2.1 功能描述</h3>
+  <p>提供互联网资产标准化登记入口。各单位可按资产类型分别登记信息，填写对应核心字段，上传与类型匹配的佐证材料；系统在提交时自动进行唯一性校验，校验通过后写入台账，并生成以归属单位为单位的资产台账视图。</p>
+
+  <h3>3.2.2 业务流程</h3>
+  <p class="noind">选择资产类型 → 填写核心字段（实时查重） → 上传佐证材料 → 提交校验 → 入库并生成台账 → 通知单位资产管理员复核。</p>
+
+  <h3>3.2.3 功能点说明</h3>
+  <table class="tbl">
+    <thead><tr><th style="width:9%">编号</th><th style="width:20%">功能点</th><th>需求描述与验收要点</th></tr></thead>
+    <tbody>
+      <tr><td class="c">FR-01</td><td>类型化登记入口</td><td>提供域名、IP 地址、应用系统、服务器、终端设备五类资产的独立登记入口；切换类型时表单字段、必填规则与材料要求同步切换，不得要求用户手动记忆字段差异。</td></tr>
+      <tr><td class="c">FR-02</td><td>核心字段采集</td><td>按类型呈现核心字段（详见表 3-2）；支持分组展示“登记信息 / 责任与管理 / 时间与位置”，必填项以红色星号标识，缺失时不放行提交。</td></tr>
+      <tr><td class="c">FR-03</td><td>类型专属字段</td><td>域名须采集备案号与解析 IP；IP 须采集网段与分配方式；应用系统须采集访问地址与等保级别；服务器须采集操作系统与资产编号；终端须采集 MAC 与使用人。</td></tr>
+      <tr><td class="c">FR-04</td><td>实时唯一性校验</td><td>用户输入标识（IP / 域名 / MAC / 访问地址）后即时比对全量台账；命中重复时在字段下方红色提示，展示已登记资产名称、归属单位与状态，并阻止提交。</td></tr>
+      <tr><td class="c">FR-05</td><td>唯一性提示口径</td><td>提示文案须包含“重复对象 + 归属单位 + 当前状态 + 建议动作”，避免用户仅看到“已存在”而无从处置；支持一键跳转查看该资产详情。</td></tr>
+      <tr><td class="c">FR-06</td><td>佐证材料上传</td><td>支持点击与拖拽上传，允许 PDF / JPG / PNG / ZIP，单文件 ≤ 20MB，单资产 ≤ 10 个附件；上传后可在表单内删除、查看文件名与大小。</td></tr>
+      <tr><td class="c">FR-07</td><td>材料与类型绑定</td><td>系统依据资产类型推荐材料名称（域名备案证明、IP 分配文件、系统上线审批表、设备采购合同）；未上传任何材料时给出显式拦截提示。</td></tr>
+      <tr><td class="c">FR-08</td><td>台账生成与分类展示</td><td>提交成功后自动生成单位资产台账记录，支持按资产类型分类切换查看，便于快速核对；新记录默认状态为“启用”，并标记“待复核”。</td></tr>
+    </tbody>
+  </table>
+  <p class="cap">表 3-2 资产登记上传功能点清单</p>
+
+  <div class="pg-foot"><span>SRS-ASSET-2026-001 · V1.0</span><span>第 5 页 / 共 12 页</span></div>
+</section>
+
+<!-- ============================ 3.2 字段表 ============================ -->
+<section class="page">
+  <div class="pg-head"><span>3.2 资产登记上传（续）</span><span>SRS-ASSET-2026-001</span></div>
+
+  <h3>3.2.4 字段需求</h3>
+  <table class="tbl">
+    <thead><tr><th style="width:13%">资产类型</th><th style="width:30%">核心字段（必填 *）</th><th style="width:22%">通用字段</th><th>佐证材料</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><b>域名</b></td>
+        <td>域名*、域名备案号*、备案主体、解析 IP 地址*</td>
+        <td rowspan="5">归属单位*、归属部门*、责任人*、联系方式*、部署位置*、上线时间*、备注</td>
+        <td>域名备案证明（ICP 备案截图或备案号核验单）</td>
+      </tr>
+      <tr>
+        <td><b>IP 地址</b></td>
+        <td>IP 地址*、IP 网段*、分配方式*（静态 / DHCP / NAT）、使用用途</td>
+        <td>IP 分配文件（运营商或机房分配单）</td>
+      </tr>
+      <tr>
+        <td><b>应用系统</b></td>
+        <td>系统名称*、访问地址*、系统简称、等级保护级别*</td>
+        <td>系统上线审批表</td>
+      </tr>
+      <tr>
+        <td><b>服务器</b></td>
+        <td>资产名称/主机名*、IP 地址*、操作系统*、资产编号/S/N</td>
+        <td>设备采购合同（含验收单）</td>
+      </tr>
+      <tr>
+        <td><b>终端设备</b></td>
+        <td>资产名称*、MAC 地址/设备编号*、设备类型*、使用人</td>
+        <td>设备采购合同 / 领用登记单</td>
+      </tr>
+    </tbody>
+  </table>
+  <p class="cap">表 3-3 资产类型—核心字段—材料对应关系</p>
+
+  <h3>3.2.5 唯一性校验规则</h3>
+  <table class="tbl">
+    <thead><tr><th style="width:14%">校验对象</th><th style="width:16%">校验时机</th><th style="width:22%">比对范围</th><th>冲突处理</th></tr></thead>
+    <tbody>
+      <tr><td>IP 地址</td><td>输入中（防抖 500ms）+ 失焦 + 提交</td><td>全量台账（含停用、报废资产）</td><td>提示重复并展示归属单位与状态，拦截提交；若属历史资产，引导用户通过“恢复启用”或“变更责任人”处理。</td></tr>
+      <tr><td>域名</td><td>同上</td><td>全量台账</td><td>同上；支持“合并登记”申请，由单位管理员审批后合并为一条记录。</td></tr>
+      <tr><td>访问地址</td><td>同上</td><td>应用系统类资产</td><td>同域不同路径视为不同资产，域名主体相同则提示“疑似同一系统，请确认”。</td></tr>
+      <tr><td>MAC / 设备编号</td><td>同上</td><td>终端设备类资产</td><td>提示重复，禁止提交；引导办理设备调拨或报废。</td></tr>
+      <tr><td>资产名称</td><td>提交时</td><td>同归属单位同类资产</td><td>不拦截，仅黄色提示，避免同名不同实体被误判。</td></tr>
+    </tbody>
+  </table>
+  <p class="cap">表 3-4 唯一性校验规则定义</p>
+
+  <h3>3.2.6 界面与交互要求</h3>
+  <ul>
+    <li>采用四步引导（选择类型 → 填写字段 → 上传材料 → 提交入库），步骤条实时反映完成进度；</li>
+    <li>右侧固定「唯一性校核」状态面板，实时呈现三项校验结果（通过 / 冲突 / 待输入），让用户随时掌握可否提交；</li>
+    <li>必填校验失败时，浏览器焦点定位到第一个错误字段并平滑滚动，同时以 Toast 汇总错误数量；</li>
+    <li>提交成功后给出明确回执（资产编号 + 台账位置），并自动跳转资产台账，避免用户重复提交。</li>
+  </ul>
+
+  <div class="note">
+    <p><b>异常场景：</b>①网络中断时保留本地草稿，恢复后提示继续填写；②附件超过大小限制时明确提示上限与当前大小；③并发提交同一标识时以后提交者为准并回滚前者，提示“该资产已被他人登记”。</p>
+  </div>
+
+  <div class="pg-foot"><span>SRS-ASSET-2026-001 · V1.0</span><span>第 6 页 / 共 12 页</span></div>
+</section>
+
+<!-- ============================ 3.3 ============================ -->
+<section class="page">
+  <div class="pg-head"><span>3.3 资产更新维护</span><span>SRS-ASSET-2026-001</span></div>
+
+  <h2>3.3 资产更新维护</h2>
+
+  <h3>3.3.1 功能描述</h3>
+  <p>支持资产信息的全生命周期维护。资产责任人可随时修改资产基本信息、更新资产运行状态（启用 / 停用 / 报废），系统自动记录每一次变更的内容、时间、变更人与变更原因，形成可追溯的变更历史日志。提供批量操作能力，并对停用、报废资产自动隔离管理；支持责任人变更申请与定期核对提醒，确保责任明确、账实相符。</p>
+
+  <h3>3.3.2 状态流转规则</h3>
+  <table class="tbl">
+    <thead><tr><th style="width:14%">当前状态</th><th style="width:20%">允许流转</th><th style="width:24%">必填信息</th><th>系统行为</th></tr></thead>
+    <tbody>
+      <tr><td><b>启用</b></td><td>停用、报废</td><td>变更原因（≥10 字）</td><td>记录变更日志；转入隔离管理时同步退出在用统计口径。</td></tr>
+      <tr><td><b>停用</b></td><td>启用、报废</td><td>变更原因、恢复说明（启用时）</td><td>恢复启用时须重新确认责任人与部署位置；日志标注“恢复启用”。</td></tr>
+      <tr><td><b>报废</b></td><td>启用（需审批）</td><td>变更原因、审批单号</td><td>默认长期隔离；恢复启用需单位管理员审批，防止误操作。</td></tr>
+    </tbody>
+  </table>
+  <p class="cap">表 3-5 运行状态流转规则</p>
+
+  <h3>3.3.3 功能点说明</h3>
+  <table class="tbl">
+    <thead><tr><th style="width:9%">编号</th><th style="width:20%">功能点</th><th>需求描述与验收要点</th></tr></thead>
+    <tbody>
+      <tr><td class="c">FR-09</td><td>基本信息修改</td><td>责任人可修改除资产标识外的全部字段；修改资产标识须走变更审批，防止绕过唯一性校验。</td></tr>
+      <tr><td class="c">FR-10</td><td>状态更新</td><td>提供启用 / 停用 / 报废三种状态切换，弹窗内以卡片式单选呈现各状态含义，必须填写变更原因方可提交。</td></tr>
+      <tr><td class="c">FR-11</td><td>状态可视化</td><td>台账、详情、看板中统一使用状态色标（启用-绿、停用-琥珀、报废-灰），并辅以文字，避免仅靠颜色传达信息。</td></tr>
+      <tr><td class="c">FR-12</td><td>变更自动留痕</td><td>每次变更生成一条日志：变更人、变更时间（精确到分）、变更类型、变更前后值、变更原因；日志不可编辑、不可删除。</td></tr>
+      <tr><td class="c">FR-13</td><td>变更历史查询</td><td>支持按资产、变更类型、时间范围、操作人检索；在资产详情中以时间线形式展示完整生命周期轨迹。</td></tr>
+      <tr><td class="c">FR-14</td><td>批量修改</td><td>勾选多项资产后可统一修改归属单位、归属部门、责任人、部署位置等字段；执行前须展示影响条数并强制填写原因。</td></tr>
+      <tr><td class="c">FR-15</td><td>批量状态更新</td><td>支持对同类资产批量变更运行状态，逐条生成日志（归并为一次批量操作记录，可下钻到单条）。</td></tr>
+      <tr><td class="c">FR-16</td><td>停用报废隔离</td><td>停用、报废资产自动标记并进入“停用与报废”隔离视图，保留全部历史信息与佐证材料，可查看、可恢复，不参与在用资产统计。</td></tr>
+      <tr><td class="c">FR-17</td><td>责任与核对</td><td>支持责任人变更申请（原责任人 → 新责任人，需接收确认）；系统按季度向责任人推送核对提醒，超期未核对在台账与看板双重标记“待核对”。</td></tr>
+    </tbody>
+  </table>
+  <p class="cap">表 3-6 资产更新维护功能点清单</p>
+
+  <div class="note">
+    <p><b>防僵尸资产机制：</b>①季度自动核对提醒（站内信 + 短信）；②超期 15 天升级提醒至单位资产管理员；③连续两个周期未核对的资产在台账中置顶并标注“信息待核实”；④核对结果计入单位资产信息完整率考核。</p>
+  </div>
+
+  <div class="pg-foot"><span>SRS-ASSET-2026-001 · V1.0</span><span>第 7 页 / 共 12 页</span></div>
+</section>
+
+<!-- ============================ 3.4 ============================ -->
+<section class="page">
+  <div class="pg-head"><span>3.4 资产统计查询</span><span>SRS-ASSET-2026-001</span></div>
+
+  <h2>3.4 资产统计查询</h2>
+
+  <h3>3.4.1 功能描述</h3>
+  <p>构建多维度资产统计查询体系，支持按资产类型、归属单位、运行状态、上线时间、责任人等维度进行组合筛选与统计，自动生成资产台账、资产分布报表、资产状态统计图表；提供模糊查询与精准定位能力，支持数据导出与可视化展示，便于管理层掌握区域内互联网资产整体分布情况。</p>
+
+  <h3>3.4.2 统计维度定义</h3>
+  <table class="tbl">
+    <thead><tr><th style="width:16%">维度</th><th style="width:24%">取值 / 粒度</th><th style="width:24%">统计口径</th><th>典型用途</th></tr></thead>
+    <tbody>
+      <tr><td>资产类型</td><td>域名 / IP / 应用系统 / 服务器 / 终端</td><td>按类型计数与占比</td><td>类型结构与占比饼图</td></tr>
+      <tr><td>归属单位</td><td>单位 → 部门（两级）</td><td>按单位计数并降序排列</td><td>各单位资产数量对比图</td></tr>
+      <tr><td>运行状态</td><td>启用 / 停用 / 报废</td><td>默认仅统计启用；可切换含隔离资产</td><td>资产状态统计报表</td></tr>
+      <tr><td>上线时间</td><td>年 / 季度 / 自定义区间</td><td>按上线时间区间过滤</td><td>存量年限分析、超龄设备识别</td></tr>
+      <tr><td>责任人</td><td>人员姓名</td><td>按责任人聚合，含名下资产数</td><td>责任分布核查、交接盘点</td></tr>
+    </tbody>
+  </table>
+  <p class="cap">表 3-7 统计维度与口径定义</p>
+
+  <h3>3.4.3 功能点说明</h3>
+  <table class="tbl">
+    <thead><tr><th style="width:9%">编号</th><th style="width:20%">功能点</th><th>需求描述与验收要点</th></tr></thead>
+    <tbody>
+      <tr><td class="c">FR-18</td><td>多维组合筛选</td><td>支持类型 + 单位 + 状态 + 上线时间区间 + 责任人的任意组合；筛选条件实时回显在结果区顶部，可一键重置。</td></tr>
+      <tr><td class="c">FR-19</td><td>统计结果聚合</td><td>输出总条数、覆盖类型数、覆盖单位数、信息完整率等汇总指标，并随筛选条件联动变化。</td></tr>
+      <tr><td class="c">FR-20</td><td>标准报表生成</td><td>自动生成资产台账、资产分布报表、资产状态统计表三类标准报表，字段口径固定，可直接用于报送。</td></tr>
+      <tr><td class="c">FR-21</td><td>模糊查询</td><td>支持资产名称、IP、域名、责任人、资产编号的模糊匹配，输入即查，结果高亮命中关键词。</td></tr>
+      <tr><td class="c">FR-22</td><td>精准定位</td><td>支持按资产编号或完整标识精确定位到唯一记录；全局搜索框支持回车直达详情。</td></tr>
+      <tr><td class="c">FR-23</td><td>详情与材料联动</td><td>列表点击可展开详情抽屉，展示完整登记信息、合规校核结果、佐证材料与变更记录，三者同屏可切换。</td></tr>
+      <tr><td class="c">FR-24</td><td>数据导出</td><td>可按当前筛选结果导出 CSV/Excel：单位资产清单、全量资产统计报表、变更日志、备案核查清单；导出行为记录操作日志。</td></tr>
+      <tr><td class="c">FR-25</td><td>可视化展示</td><td>提供各单位资产数量对比柱状图与各类资产占比环形图；图表支持维度切换、悬浮查看数值，颜色与台账类型色标一致。</td></tr>
+    </tbody>
+  </table>
+  <p class="cap">表 3-8 资产统计查询功能点清单</p>
+
+  <div class="note">
+    <p><b>口径一致性要求：</b>所有页面的“资产总数”必须来自同一数据快照，看板、台账、报表三处数字在同一时刻保持严格一致；跨页跳转时筛选条件应随上下文传递，不得出现“看板显示 14、点进去只有 10”的体验断裂。</p>
+  </div>
+
+  <div class="pg-foot"><span>SRS-ASSET-2026-001 · V1.0</span><span>第 8 页 / 共 12 页</span></div>
+</section>
+
+<!-- ============================ 4 数据需求 ============================ -->
+<section class="page">
+  <div class="pg-head"><span>4 数据需求</span><span>SRS-ASSET-2026-001</span></div>
+
+  <div class="chapter-head"><span class="cno">04</span><h1>数据需求</h1></div>
+
+  <h2>4.1 核心数据实体</h2>
+  <table class="tbl">
+    <thead><tr><th style="width:20%">字段名</th><th style="width:14%">类型</th><th style="width:10%">必填</th><th style="width:16%">取值 / 约束</th><th>说明</th></tr></thead>
+    <tbody>
+      <tr><td>asset_id</td><td>字符串(16)</td><td class="c">是</td><td>唯一，系统生成</td><td>资产唯一编号，形如 A1001</td></tr>
+      <tr><td>asset_name</td><td>字符串(80)</td><td class="c">是</td><td>2～80 字符</td><td>资产名称 / 系统名称</td></tr>
+      <tr><td>asset_type</td><td>枚举</td><td class="c">是</td><td>domain / ip / app / server / terminal</td><td>资产类型，决定字段模板</td></tr>
+      <tr><td>asset_ident</td><td>字符串(120)</td><td class="c">是</td><td>类型内唯一</td><td>资产标识：域名 / IP / 访问地址 / MAC</td></tr>
+      <tr><td>beian_no</td><td>字符串(40)</td><td class="c">否</td><td>域名类必填</td><td>ICP 备案号</td></tr>
+      <tr><td>ip_segment</td><td>字符串(24)</td><td class="c">否</td><td>CIDR 格式</td><td>IP 网段</td></tr>
+      <tr><td>unit_name</td><td>字符串(60)</td><td class="c">是</td><td>字典项</td><td>归属单位</td></tr>
+      <tr><td>dept_name</td><td>字符串(60)</td><td class="c">是</td><td>2～60 字符</td><td>归属部门</td></tr>
+      <tr><td>owner_name</td><td>字符串(30)</td><td class="c">是</td><td>组织架构在职人员</td><td>责任人</td></tr>
+      <tr><td>owner_phone</td><td>字符串(20)</td><td class="c">是</td><td>手机号或内线</td><td>联系方式</td></tr>
+      <tr><td>deploy_location</td><td>字符串(120)</td><td class="c">是</td><td>—</td><td>部署位置（机房 / 机柜 / 云区域）</td></tr>
+      <tr><td>online_date</td><td>日期</td><td class="c">是</td><td>≤ 当前日期</td><td>上线时间</td></tr>
+      <tr><td>run_status</td><td>枚举</td><td class="c">是</td><td>active / stopped / scrapped</td><td>运行状态</td></tr>
+      <tr><td>verify_status</td><td>枚举</td><td class="c">是</td><td>ok / due / overdue</td><td>核对状态，驱动待核对标记</td></tr>
+      <tr><td>updated_at</td><td>时间</td><td class="c">是</td><td>自动维护</td><td>最近变更时间</td></tr>
+    </tbody>
+  </table>
+  <p class="cap">表 4-1 资产主表字段定义</p>
+
+  <h2>4.2 衍生数据实体</h2>
+  <ul>
+    <li><b>资产变更日志（asset_change_log）</b>：日志 ID、资产 ID、变更类型、字段名、变更前值、变更后值、变更原因、操作人、操作时间、审批单号；只增不改不删。</li>
+    <li><b>资产附件（asset_attachment）</b>：附件 ID、资产 ID、材料类型、文件名、大小、存储路径、上传人、上传时间、校验值（MD5）。</li>
+    <li><b>核对记录（asset_verify_record）</b>：资产 ID、核对周期、发送时间、响应人、响应时间、核对结论（一致 / 需修改 / 已失效）。</li>
+    <li><b>责任交接（owner_transfer）</b>：资产 ID、原责任人、新责任人、申请原因、审批状态、生效时间。</li>
+  </ul>
+
+  <h2>4.3 数据质量与保留策略</h2>
+  <table class="tbl">
+    <thead><tr><th style="width:22%">策略项</th><th>要求</th></tr></thead>
+    <tbody>
+      <tr><td>完整性</td><td>核心字段完整率 ≥ 95%；佐证材料覆盖率 ≥ 90%（域名、应用系统类 100%）。</td></tr>
+      <tr><td>一致性</td><td>同一标识在全量台账中唯一；停机、报废资产不得出现在在用统计口径中。</td></tr>
+      <tr><td>可追溯性</td><td>变更日志保留不少于 5 年；报废资产数据永久保留，不做物理删除。</td></tr>
+      <tr><td>附件保留</td><td>随资产存续；资产报废后附件转冷存储，保留可查能力。</td></tr>
+    </tbody>
+  </table>
+  <p class="cap">表 4-2 数据质量与保留策略</p>
+
+  <div class="pg-foot"><span>SRS-ASSET-2026-001 · V1.0</span><span>第 9 页 / 共 12 页</span></div>
+</section>
+
+<!-- ============================ 5 非功能需求 ============================ -->
+<section class="page">
+  <div class="pg-head"><span>5 非功能需求</span><span>SRS-ASSET-2026-001</span></div>
+
+  <div class="chapter-head"><span class="cno">05</span><h1>非功能需求</h1></div>
+
+  <table class="tbl">
+    <thead><tr><th style="width:14%">类别</th><th style="width:14%">编号</th><th>指标与要求</th></tr></thead>
+    <tbody>
+      <tr><td rowspan="3"><b>性能</b></td><td class="c">NFR-01</td><td>资产总量 10 万条规模下，台账列表首屏加载 ≤ 2s，翻页与筛选响应 ≤ 1s。</td></tr>
+      <tr><td class="c">NFR-02</td><td>唯一性校验单次响应 ≤ 300ms；批量操作单批上限 500 条，异步执行并提供进度反馈。</td></tr>
+      <tr><td class="c">NFR-03</td><td>统计图表在 10 万条数据下渲染 ≤ 3s，支持按需聚合与缓存。</td></tr>
+      <tr><td rowspan="3"><b>安全</b></td><td class="c">NFR-04</td><td>基于角色的访问控制，数据行级隔离：用户仅可见本单位资产，跨单位需授权。</td></tr>
+      <tr><td class="c">NFR-05</td><td>导出、批量操作、报废恢复等敏感动作须二次确认并记录审计日志（操作人/IP/时间/对象/结果）。</td></tr>
+      <tr><td class="c">NFR-06</td><td>附件存储加密，下载链接具备时效性签名；防止越权访问与批量爬取。</td></tr>
+      <tr><td rowspan="3"><b>易用性</b></td><td class="c">NFR-07</td><td>核心任务（登记一项资产）在无培训条件下完成率 ≥ 90%，平均耗时 ≤ 4 分钟。</td></tr>
+      <tr><td class="c">NFR-08</td><td>所有表单具备字段级校验提示，错误提示须说明“哪里错、为什么错、怎么改”。</td></tr>
+      <tr><td class="c">NFR-09</td><td>列表操作支持键盘完成：Tab 遍历、空格勾选、Enter 打开详情、Esc 关闭浮层。</td></tr>
+      <tr><td rowspan="2"><b>可用性</b></td><td class="c">NFR-10</td><td>系统年可用率 ≥ 99.5%；计划内维护提前 3 个工作日公示。</td></tr>
+      <tr><td class="c">NFR-11</td><td>关键操作失败须可重试且不产生重复数据（幂等设计）。</td></tr>
+      <tr><td rowspan="2"><b>兼容性</b></td><td class="c">NFR-12</td><td>适配 1366～2560px 宽度；1366px 下无横向滚动条（表格区域内部滚动除外）。</td></tr>
+      <tr><td class="c">NFR-13</td><td>支持浏览器 200% 文本缩放不破版、不遮挡；满足 WCAG 2.1 AA 对比度（正文 ≥ 4.5:1）。</td></tr>
+      <tr><td rowspan="2"><b>可维护性</b></td><td class="c">NFR-14</td><td>字段模板、字典项、查重规则通过配置维护，新增资产类型无需改动前台代码。</td></tr>
+      <tr><td class="c">NFR-15</td><td>前后端分离，接口遵循 RESTful 规范，提供完整的接口文档与错误码表。</td></tr>
+      <tr><td><b>合规</b></td><td class="c">NFR-16</td><td>满足等级保护三级对资产管理、审计留痕、数据备份的要求；审计日志保留 ≥ 6 个月。</td></tr>
+    </tbody>
+  </table>
+  <p class="cap">表 5-1 非功能需求清单</p>
+
+  <div class="note">
+    <p><b>设计原则：</b>①一致性优先——同类信息（状态、类型、单位）在全站采用同一色彩与措辞；②信息密度可控——列表默认展示决策必需的 6～8 列，其余信息收纳至详情；③克制的视觉——颜色仅用于传达状态与层级，不用于装饰。</p>
+  </div>
+
+  <div class="pg-foot"><span>SRS-ASSET-2026-001 · V1.0</span><span>第 10 页 / 共 12 页</span></div>
+</section>
+
+<!-- ============================ 6 + 7 ============================ -->
+<section class="page">
+  <div class="pg-head"><span>6 接口需求 · 7 界面与交互规范</span><span>SRS-ASSET-2026-001</span></div>
+
+  <div class="chapter-head"><span class="cno">06</span><h1>接口需求</h1></div>
+
+  <table class="tbl">
+    <thead><tr><th style="width:16%">接口</th><th style="width:14%">方向</th><th style="width:16%">协议</th><th>说明</th></tr></thead>
+    <tbody>
+      <tr><td>统一身份认证</td><td>入向</td><td>OAuth 2.0 / CAS</td><td>单点登录、用户与组织架构同步、角色映射。</td></tr>
+      <tr><td>组织与人员</td><td>入向</td><td>REST / 定时同步</td><td>同步在职人员，责任人变更时校验接收人在职状态。</td></tr>
+      <tr><td>通知服务</td><td>出向</td><td>HTTP / 短信网关</td><td>核对提醒、催办、审批待办的多渠道推送。</td></tr>
+      <tr><td>CMDB / 监控</td><td>双向</td><td>REST</td><td>拉取资产在线状态辅助核对；新登记资产回写 CMDB。</td></tr>
+      <tr><td>备案核验</td><td>出向</td><td>HTTPS 查询</td><td>域名备案号格式与主体一致性校验（可选能力）。</td></tr>
+      <tr><td>导出服务</td><td>出向</td><td>文件流</td><td>CSV / XLSX 生成，10 万条以内同步返回，超出走异步任务。</td></tr>
+    </tbody>
+  </table>
+  <p class="cap">表 6-1 接口需求清单</p>
+
+  <div class="chapter-head" style="margin-top:22px"><span class="cno">07</span><h1>界面与交互规范</h1></div>
+
+  <h2>7.1 设计令牌</h2>
+  <table class="tbl">
+    <thead><tr><th style="width:18%">令牌</th><th style="width:34%">取值</th><th>用途</th></tr></thead>
+    <tbody>
+      <tr><td>主色</td><td>#1F5EFF（点击态 #1A4FD6，浅底 #EEF3FF）</td><td>主按钮、链接、选中态、图表主序列</td></tr>
+      <tr><td>语义色</td><td>启用 #0F9D6E / 停用 #C2740A / 报废 #5B6B82 / 危险 #DC2626</td><td>状态标签、校验反馈、风险提示</td></tr>
+      <tr><td>中性色</td><td>主文 #0F172A / 次文 #48566B / 辅助 #8A97AB / 分隔 #E6EAF2 / 页面底 #F4F6FB</td><td>文字层级与容器分隔</td></tr>
+      <tr><td>字号</td><td>12 / 13 / 14 / 16 / 21 / 28 px</td><td>辅助说明 → 正文 → 标题 → 页面标题 → 关键指标</td></tr>
+      <tr><td>间距</td><td>4 的倍数（4/8/12/16/24/32）</td><td>统一页面节奏，组件内外边距</td></tr>
+      <tr><td>圆角</td><td>8px（控件）/ 14px（卡片）/ 18px（弹窗）/ 50%（头像）</td><td>层级区分的视觉语言</td></tr>
+    </tbody>
+  </table>
+  <p class="cap">表 7-1 设计令牌定义</p>
+
+  <h2>7.2 关键交互约定</h2>
+  <ul>
+    <li><b>四层信息架构</b>：顶栏（全局搜索与身份） → 侧栏（模块导航） → 页面标题区（动作） → 内容区（表格/表单/图表），保持全站一致。</li>
+    <li><b>反馈三件套</b>：即时校验（字段下方）、操作结果（右上角 Toast）、重要变更（弹窗二次确认），三者不可互相替代。</li>
+    <li><b>详情用抽屉而非新页</b>：避免列表上下文丢失，抽屉内以 Tab 切换“基本信息 / 佐证材料 / 变更记录”。</li>
+    <li><b>危险操作隔离</b>：报废、批量修改等使用独立弹窗 + 必填原因 + 影响条数提示，主按钮不默认聚焦。</li>
+    <li><b>空态与加载</b>：列表空态给出原因与下一步动作；加载使用骨架屏而非空白等待。</li>
+  </ul>
+
+  <div class="pg-foot"><span>SRS-ASSET-2026-001 · V1.0</span><span>第 11 页 / 共 12 页</span></div>
+</section>
+
+<!-- ============================ 8 + 附录 ============================ -->
+<section class="page">
+  <div class="pg-head"><span>8 验收标准 · 附录</span><span>SRS-ASSET-2026-001</span></div>
+
+  <div class="chapter-head"><span class="cno">08</span><h1>验收标准</h1></div>
+
+  <table class="tbl">
+    <thead><tr><th style="width:8%">编号</th><th style="width:26%">验收场景</th><th>通过标准</th></tr></thead>
+    <tbody>
+      <tr><td class="c">AC-01</td><td>五类资产分别登记</td><td>切换类型后表单字段、必填项、材料要求同步变化；五类资产均可成功入库。</td></tr>
+      <tr><td class="c">AC-02</td><td>重复 IP 登记拦截</td><td>输入已存在的 IP，300ms 内出现红色提示并显示已登记资产名称与单位；提交被阻止。</td></tr>
+      <tr><td class="c">AC-03</td><td>缺材料拦截</td><td>未上传任何附件时提交，给出显式提示且不生成台账记录。</td></tr>
+      <tr><td class="c">AC-04</td><td>状态变更留痕</td><td>将资产由启用改为停用，变更日志新增一条记录，含操作人、时间、原因、前后值。</td></tr>
+      <tr><td class="c">AC-05</td><td>批量状态更新</td><td>勾选 5 项资产批量停用，5 项状态同步变更并各生成日志，操作可下钻追溯。</td></tr>
+      <tr><td class="c">AC-06</td><td>隔离与恢复</td><td>停用资产退出在用统计；在“停用与报废”中可查看全部历史并可恢复启用。</td></tr>
+      <tr><td class="c">AC-07</td><td>多维筛选一致性</td><td>按“单位 + 类型 + 状态”筛选后，列表条数与统计卡片数一致。</td></tr>
+      <tr><td class="c">AC-08</td><td>导出正确性</td><td>导出 CSV 与当前筛选结果条数一致，字段完整、中文不乱码。</td></tr>
+      <tr><td class="c">AC-09</td><td>键盘可操作性</td><td>不使用鼠标可完成：切换模块 → 筛选 → 打开详情 → 关闭。</td></tr>
+    </tbody>
+  </table>
+  <p class="cap">表 8-1 验收场景与通过标准</p>
+
+  <div class="chapter-head" style="margin-top:20px"><span class="cno">附录 A</span><h1>需求—原型追溯矩阵</h1></div>
+  <table class="tbl">
+    <thead><tr><th style="width:22%">原型页面</th><th style="width:30%">对应功能</th><th>关键交互</th></tr></thead>
+    <tbody>
+      <tr><td>P1 资产全景工作台</td><td>FR-08 / FR-18 / FR-25</td><td>指标卡联动、维度切换柱状图、占比环形图、待办跳转</td></tr>
+      <tr><td>P2 资产登记</td><td>FR-01～FR-07</td><td>类型卡片切换字段、实时查重、拖拽上传、分步引导</td></tr>
+      <tr><td>P3 资产台账</td><td>FR-08 / FR-21 / FR-22</td><td>模糊搜索、多条件筛选、批量勾选、详情抽屉</td></tr>
+      <tr><td>P4 更新维护</td><td>FR-10～FR-17</td><td>状态变更弹窗、变更时间线、批量操作、核对催办</td></tr>
+      <tr><td>P5 统计报表</td><td>FR-18～FR-25</td><td>维度切换、报表卡片导出、筛选联动</td></tr>
+    </tbody>
+  </table>
+  <p class="cap">表 A-1 需求与原型页面追溯关系</p>
+
+  <div class="chapter-head" style="margin-top:18px"><span class="cno">附录 B</span><h1>待确认事项</h1></div>
+  <ol>
+    <li>责任人变更是否需要新责任人在线确认？确认超时（如 3 个工作日）后的默认处理策略待定。</li>
+    <li>报废资产恢复启用是否一律需单位管理员审批，或可按资产类型分级授权？</li>
+    <li>域名备案号是否接入外部核验接口，或仅做格式校验并依赖人工上传材料？</li>
+    <li>跨单位资产调拨（如设备移交）的审批流与台账归属切换时点待明确。</li>
+    <li>历史 Excel 台账的批量导入模板与去重规则需在实施阶段细化。</li>
+  </ol>
+
+  <div class="pg-foot"><span>SRS-ASSET-2026-001 · V1.0</span><span>第 12 页 / 共 12 页</span></div>
+</section>
+
+</body>
+</html>
