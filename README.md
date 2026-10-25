@@ -36,18 +36,20 @@
 
 ## 在线预览
 
-仓库根目录的 `index.html` 可直接作为 GitHub Pages 站点预览（若已开启，访问
-`https://<your-account>.github.io/internet-asset-registry/`）。
+- **UI 原型（交互演示）**：https://aimiliya825.github.io/internet-asset-registry/
+- **需求规格说明书（HTML 版）**：[在线查看](https://aimiliya825.github.io/internet-asset-registry/%E9%9C%80%E6%B1%82%E8%A7%84%E6%A0%BC%E8%AF%B4%E6%98%8E%E4%B9%A6.html)
 
-也可用 URL hash 直达指定页面：
+也可用 URL hash 直达原型指定页面：
 
 ```
-index.html#dashboard   资产全景工作台
-index.html#register    资产登记
-index.html#ledger      资产台账
-index.html#maintain    更新维护
-index.html#stats       统计报表
+#dashboard   资产全景工作台
+#register    资产登记
+#ledger      资产台账
+#maintain    更新维护
+#stats       统计报表
 ```
+
+例如：https://aimiliya825.github.io/internet-asset-registry/#register
 
 ## 目录结构
 
