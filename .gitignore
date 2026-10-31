@@ -10,3 +10,17 @@ desktop.ini
 _t*.html
 _check.js
 *.tmp
+
+# Java / Maven（后端）
+server/target/
+server/storage/
+server/*.log
+server/run.log
+*.class
+*.jar
+!server/.mvn/wrapper/maven-wrapper.jar
+
+# 本地数据库凭据（切勿提交）
+.env
+*.local.yml
+server/src/main/resources/application-local.yml

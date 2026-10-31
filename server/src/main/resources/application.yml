@@ -1,0 +1,50 @@
+server:
+  port: 8080
+  servlet:
+    encoding:
+      charset: UTF-8
+      force: true
+
+spring:
+  application:
+    name: asset-registry-server
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/asset_registry?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 2
+      connection-timeout: 10000
+      pool-name: AssetHikariPool
+
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: none          # 表结构由 db/01_schema.sql 管理，避免运行期改动生产库
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: Asia/Shanghai
+        format_sql: false
+    show-sql: false
+
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: 60MB
+
+  jackson:
+    default-property-inclusion: non_null
+    time-zone: Asia/Shanghai
+
+app:
+  storage-root: ./storage
+
+logging:
+  level:
+    root: info
+    com.asset.registry: info
+    org.hibernate.SQL: warn
